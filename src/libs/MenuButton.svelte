@@ -15,13 +15,14 @@
         display: inline;
         background-color: #98c1d9;
         font-size: large;
+        font-weight: bold;
         align-content: center;
         padding: 1em;
         margin: 0;
         margin-left: 10px;
         height: 100%;
         border-radius: 8px;
-        transition: background-color 0.5s;
+        transition: background-color 0.25s;
     }
 
     nav:hover{

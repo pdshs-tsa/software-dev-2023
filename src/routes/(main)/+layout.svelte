@@ -8,6 +8,7 @@
     <header>
         <MenuButton text="Home" endpoint="/"/>
         <MenuButton text="Play" endpoint="/play"/>
+        <MenuButton text="Login" endpoint="/login" />
     </header>
 
     <div id="content">
