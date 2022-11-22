@@ -24,6 +24,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@picocss/pico": "^1.5.6"
+		"@picocss/pico": "^1.5.6",
+		"argon2": "^0.30.2",
+		"better-sqlite3": "^7.6.2",
+		"quick.db": "^9.0.6",
+		"uuid": "^9.0.0"
 	}
 }
