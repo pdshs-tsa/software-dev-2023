@@ -1,5 +1,4 @@
 <script>
-    import pico from "@picocss/pico"
     import MenuButton from "../../../libs/MenuButton.svelte";
     //color palette- https://coolors.co/98c1d9-f17105-d11149-6610f2-1a8fe3
 </script>
