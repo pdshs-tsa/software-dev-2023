@@ -1,10 +1,8 @@
 <script>
     import { slide } from 'svelte/transition';
-    import { createEventDispatcher } from 'svelte';
 
-    const dispatch = createEventDispatcher();
-    let collapsed = false;
-    $: buttonText = "Hide"
+    let collapsed = true;
+    $: buttonText = "Show"
 
     export let data = {
         question: '',
@@ -15,24 +13,18 @@
         collapsed = !collapsed;
         (collapsed) ? buttonText = "Show" : buttonText = "Hide";
     }
-
-    function remove() {
-        dispatch('remove', {
-            component: data
-        });
-    }
 </script>
 
 <div class="body">
     <div style="display: flex">
-        <input type="text" bind:value={data.question} placeholder="Prompt" id="question">
+        <p id="question">{data.question}</p>
         <button on:click={() => switchStatus()} class="button">{buttonText}</button>
-        <button on:click={() => remove()} class="button">Remove</button>
     </div>
     {#if !collapsed}
         <div transition:slide|local>
             {#each data.answers as answer}
-                <input type="text" bind:value={answer} placeholder="Option" class="option">
+                <p class="option">{answer}</p>
+                <!--<input type="text" bind:value={answer} placeholder="Option" class="option"> -->
             {/each}
         </div>
     {/if}
@@ -51,21 +43,23 @@
         border-right: 0;
         border-radius: 0;
 
-        padding: 5px;
+        padding: 7px 7px 15px;
         margin: 10px;
         width: 70%;
+        border-bottom: 1px solid #73828c;
     }
 
     .option {
+        display: inline-block;
         border-top: 0;
         border-left: 0;
         border-right: 0;
         border-radius: 0;
 
-        padding: 5px;
-        margin: 10px;
-        margin-left: 60px;
+        padding: 7px 7px 15px;
+        margin: 10px 10px 10px 60px;
         width: 40%;
+        border-bottom: 1px solid #73828c;
     }
 
     .button {

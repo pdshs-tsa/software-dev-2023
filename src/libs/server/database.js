@@ -6,6 +6,7 @@ const users = new QuickDB({filePath: "./users.sqlite"});
 // eslint-disable-next-line no-unused-vars
 const classes = new QuickDB({filePath: "./classes.sqlite"});
 const sessions = new QuickDB({filePath: "./session.sqlite"});
+const sets = new QuickDB({filePath: './sets.sqlite'});
 
 class Database {
     /**
@@ -105,6 +106,45 @@ class Database {
 
         await sessions.delete(uuid);
         await users.delete(`${data.username}.session`);
+    }
+
+    /**
+     * Creates a new set
+     * @param {string} username the username of the set author
+     * @param {unknown} setData the data of the set
+     * @return {Promise<string>} the uuid of the set
+     */
+    async createSet(username, setData){
+        /*
+            setData format:
+            {
+                title: (string),
+                desc: (string),
+                data: (setcomponent data)
+            }
+         */
+        const uuid = uuidv4();
+        const data = {
+            uuid: uuid,
+            title: setData.title,
+            description: setData.desc,
+            author: username,
+            timestamp: Date.now(),
+            data: setData.data
+        }
+
+        await sets.set(uuid, data);
+        await users.add(`${username}.sets`, uuid);
+        return uuid;
+    }
+
+    /**
+     * Gets the set with the specified uuid
+     * @param {string} uuid the uuid of the set
+     * @return {Promise<unknown>} the set data
+     */
+    async getSet(uuid){
+        return await sets.get(uuid);
     }
 }
 
