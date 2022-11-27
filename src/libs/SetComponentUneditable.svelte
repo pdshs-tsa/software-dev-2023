@@ -5,7 +5,7 @@
     $: buttonText = "Show"
 
     export let data = {
-        question: '',
+        prompt: '',
         answers: ['', '', '', '']
     }
 
@@ -17,7 +17,7 @@
 
 <div class="body">
     <div style="display: flex">
-        <p id="question">{data.question}</p>
+        <p id="question">{data.prompt}</p>
         <button on:click={() => switchStatus()} class="button">{buttonText}</button>
     </div>
     {#if !collapsed}

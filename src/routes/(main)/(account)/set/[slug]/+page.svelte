@@ -14,7 +14,7 @@
         <h5>{set.description}</h5>
 
         <ul>
-            //TODO: make this into a link to a user profile thing
+            <!-- TODO: make this into a link to a user profile thing -->
             <li>Created by {set.author}</li>
             <li>{new Date(set.timestamp).toDateString()}</li>
         </ul>

@@ -7,7 +7,7 @@
     $: buttonText = "Hide"
 
     export let data = {
-        question: '',
+        prompt: '',
         answers: ['', '', '', '']
     }
 
@@ -25,7 +25,7 @@
 
 <div class="body">
     <div style="display: flex">
-        <input type="text" bind:value={data.question} placeholder="Prompt" id="question">
+        <input type="text" bind:value={data.prompt} placeholder="Prompt" id="question">
         <button on:click={() => switchStatus()} class="button">{buttonText}</button>
         <button on:click={() => remove()} class="button">Remove</button>
     </div>

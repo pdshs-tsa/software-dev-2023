@@ -134,7 +134,7 @@ class Database {
         }
 
         await sets.set(uuid, data);
-        await users.add(`${username}.sets`, uuid);
+        await users.push(`${username}.sets`, uuid);
         return uuid;
     }
 
