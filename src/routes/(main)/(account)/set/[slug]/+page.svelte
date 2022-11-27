@@ -1,11 +1,10 @@
 <script>
     import { slide } from 'svelte/transition';
     import SetComponentUneditable from "../../../../../libs/SetComponentUneditable.svelte";
+    import { page } from '$app/stores'
 
-    /** @type {import('./$types').PageData} */
-    export let data;
-    $: user = data.user;
-    $: set = data.set;
+    const user = $page.data.user;
+    const set = $page.data.set;
 </script>
 
 <div class="body">

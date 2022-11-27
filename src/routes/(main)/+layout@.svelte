@@ -29,7 +29,7 @@
     }
 
     :global(html){
-        overflow-y: scroll;
+        overflow-y: clip;
     }
 
     #content{

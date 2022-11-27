@@ -3,15 +3,17 @@
     import { slide } from 'svelte/transition';
     import {applyAction, deserialize} from "$app/forms";
     import {goto, invalidateAll} from "$app/navigation";
+    import { page } from '$app/stores'
 
-    export let data;
-    $: components = [{ prompt: '', answers: ['', '', '', ''] }];
-    $: user = data.user;
+    $: components = [{ prompt: '', answers: ['', '', '', ''], correct: '' }];
+    const user = $page.data.user;
+    let valid = true;
 
     function addComponent() {
         let data = {
             prompt: '',
-            answers: ['', '', '', '']
+            answers: ['', '', '', ''],
+            correct: ''
         }
 
         components.push(data);
@@ -26,14 +28,47 @@
     }
 
     async function handleSubmit(event){
+
+        //init form data container
         let formData = new FormData(this);
+
+        //check if everything is filled out
+        valid = true;
+        if (formData.get('name') === '' || formData.get('desc') === '') valid = false;
+        if (components.length < 1) valid = false;
+        for (const i of components) {
+            if (i.prompt === '' || i.correct === '') {
+                valid = false;
+                break;
+            }
+            for (let j = 0; j < i.answers.length; j++){
+                if (i.answers[j] === ''){
+                    valid = false;
+                    break;
+                }
+
+                if (j === 0) continue;
+                if (i.answers[j] === i.answers[j - 1]){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        console.log(valid);
+
+        if (!valid) return;
+
+        //add components as new key in data
         await formData.append('components', JSON.stringify(components));
 
+        //post to page.server.js
         const response = await fetch(this.action, {
             method: 'POST',
             body: formData
         });
 
+        //check result
         /** @type {import('@sveltejs/kit').ActionResult} */
         const result = deserialize(await response.text());
 
@@ -42,6 +77,7 @@
             await invalidateAll();
         }
 
+        //goto set
         await applyAction(result);
         await goto('/set/' + result.data.set);
     }
@@ -55,6 +91,11 @@
             <input type="text" class="textbox" placeholder="Description" name="desc">
             <button type="submit">Create</button>
         </form>
+
+        {#if !valid}
+            <p class="error">One or more of the questions are invalid</p>
+            <p class="error">Please make sure all fields are filled and no answers are duplicates</p>
+        {/if}
     </div>
 
     <div id="create-questions">
@@ -98,4 +139,9 @@
         padding: 5px;
     }
 
+    .error {
+        margin: 10px;
+        color: red;
+        font-size: medium;
+    }
 </style>

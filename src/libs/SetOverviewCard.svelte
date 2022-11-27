@@ -1,4 +1,6 @@
 <script>
+    import {goto} from "$app/navigation";
+
     export let data = {
         uuid: '',
         title: 'Sample Set',
@@ -12,16 +14,23 @@
         }]
     };
 
+    export let showAuthor = false;
+
     const sampleQuestions = data.data.slice(0, (data.data.length < 3) ? data.data.length : 2);
+
+    function navigateToSet(){
+        goto(`/set/${data.uuid}`);
+    }
 </script>
 
-<div class="body">
+<div class="body" on:click={navigateToSet} on:keydown={navigateToSet}>
     <div class="centered">
-        <a href="/set/{data.uuid}">{data.title}</a>
+        <h3>{data.title}</h3>
     </div>
     <div>
         <ul>
             <li>{data.description}</li>
+            {#if showAuthor} <li>By {data.author}</li> {/if}
             <li>Created {new Date(data.timestamp).toDateString()}</li>
         </ul>
 
@@ -41,20 +50,26 @@
         height: 30vh;
         width: 20vw;
         padding: 10px;
-        border: 3px solid #d9e7f8;
-        border-radius: 16px;
+        border: 1px solid lightgrey;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
         display: block;
         align-content: center;
         overflow: auto;
-        margin-left: 10px;
+        margin: 5px;
+        flex-shrink: 0;
+    }
+
+    .body:hover{
+        cursor: pointer;
     }
 
     .centered {
         text-align: center;
     }
 
-    a {
+    h3 {
         font-size: x-large;
+        margin: 0;
     }
 
     li {

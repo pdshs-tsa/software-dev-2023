@@ -16,3 +16,9 @@ export const actions = {
         throw redirect(302, '/home');
     }
 }
+
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ cookies }) {
+    const user = await database.getUserFromSession(cookies.get('sessionid'));
+    if (user != null) throw new redirect('303', '/home');
+}

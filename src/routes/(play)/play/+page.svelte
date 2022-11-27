@@ -1,5 +1,6 @@
 <script>
     import {fly} from "svelte/transition"
+    import pico from '@picocss/pico'
 </script>
 
 <div class="background">

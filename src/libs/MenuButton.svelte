@@ -1,4 +1,4 @@
-<nav on:click={goto(endpoint)}>{text}</nav>
+<nav on:click={goto(endpoint)} on:keypress={goto(endpoint)}>{text}</nav>
 
 <script>
     import { goto } from "$app/navigation"
@@ -18,8 +18,7 @@
         font-weight: bold;
         align-content: center;
         padding: 1em;
-        margin: 0;
-        margin-left: 10px;
+        margin: 0 5px;
         height: 100%;
         border-radius: 8px;
         transition: background-color 0.25s;

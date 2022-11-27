@@ -1,6 +1,7 @@
 import {QuickDB} from 'quick.db';
 import * as argon2 from 'argon2';
 import {v4 as uuidv4} from 'uuid';
+import {compareTwoStrings} from "string-similarity";
 
 const users = new QuickDB({filePath: "./users.sqlite"});
 // eslint-disable-next-line no-unused-vars
@@ -145,6 +146,38 @@ class Database {
      */
     async getSet(uuid){
         return await sets.get(uuid);
+    }
+
+    /**
+     * Searches set titles and returns the most similar
+     * @param {string} query the search term
+     * @return {Promise<object[]>} the array of objects
+     */
+    async searchSets(query){
+        query = query.replaceAll('_', ' ').toLowerCase();
+        const arr = await sets.all();
+
+        //TODO- reduce this to one array pass
+        const trimmedarr = arr.filter(obj => {
+            const value = compareTwoStrings(obj.value.title.toLowerCase(), query);
+            return value > 0.5;
+        });
+
+        //TODO: optimize this, way too slow
+        return trimmedarr.sort((a, b) => {
+            const avalue = compareTwoStrings(a.value.title.toLowerCase(), query);
+            const bvalue = compareTwoStrings(b.value.title.toLowerCase(), query);
+
+            if (avalue > bvalue) {
+                return -1;
+            }
+
+            if (avalue < bvalue) {
+                return 1;
+            }
+
+            return 0;
+        });
     }
 }
 

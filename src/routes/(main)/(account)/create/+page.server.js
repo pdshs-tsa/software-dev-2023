@@ -10,9 +10,6 @@ export const actions = {
         const session = await cookies.get('sessionid');
         const user = await database.getUserFromSession(session);
 
-        console.log(data);
-        console.log(JSON.stringify(data));
-
         const setData = {
             title: title,
             desc: description,

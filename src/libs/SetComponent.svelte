@@ -8,7 +8,8 @@
 
     export let data = {
         prompt: '',
-        answers: ['', '', '', '']
+        answers: ['', '', '', ''],
+        correct: ''
     }
 
     function switchStatus(){
@@ -33,6 +34,7 @@
         <div transition:slide|local>
             {#each data.answers as answer}
                 <input type="text" bind:value={answer} placeholder="Option" class="option">
+                <input type="radio" bind:group={data.correct} value={answer}>
             {/each}
         </div>
     {/if}
@@ -63,9 +65,12 @@
         border-radius: 0;
 
         padding: 5px;
-        margin: 10px;
-        margin-left: 60px;
-        width: 40%;
+        margin: 10px 10px 10px 60px;
+        width: 35%;
+    }
+
+    input[type=radio] {
+        margin: auto;
     }
 
     .button {

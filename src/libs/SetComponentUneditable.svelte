@@ -6,7 +6,8 @@
 
     export let data = {
         prompt: '',
-        answers: ['', '', '', '']
+        answers: ['', '', '', ''],
+        correct: ''
     }
 
     function switchStatus(){
@@ -23,8 +24,11 @@
     {#if !collapsed}
         <div transition:slide|local>
             {#each data.answers as answer}
-                <p class="option">{answer}</p>
-                <!--<input type="text" bind:value={answer} placeholder="Option" class="option"> -->
+                {#if data.correct === answer}
+                    <p class="option"><strong>{answer}</strong></p>
+                {:else}
+                    <p class="option">{answer}</p>
+                {/if}
             {/each}
         </div>
     {/if}
