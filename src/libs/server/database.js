@@ -85,6 +85,7 @@ class Database {
      */
     async getUserFromSession(uuid){
         //format- uuid
+        if (uuid == null || !(await sessions.has(uuid))) return null;
         const data = await sessions.get(uuid);
         if (data == null) return null;
         if (data.expiration < Date.now()) {
@@ -157,7 +158,7 @@ class Database {
         query = query.replaceAll('_', ' ').toLowerCase();
         const arr = await sets.all();
 
-        //TODO- reduce this to one array pass
+        //TODO: reduce this to one array pass
         const trimmedarr = arr.filter(obj => {
             const value = compareTwoStrings(obj.value.title.toLowerCase(), query);
             return value > 0.5;

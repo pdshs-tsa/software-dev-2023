@@ -10,7 +10,7 @@
         <div class="buttons">
             <MenuButton text="Home" endpoint="/home"/>
             <MenuButton text="Create" endpoint="/create" />
-            <MenuButton text="Play" endpoint="/play"/>
+            <MenuButton text="Class" endpoint="/class" />
             <MenuButton text="Search" endpoint="/search" />
         </div>
 

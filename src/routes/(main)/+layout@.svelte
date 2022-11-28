@@ -7,9 +7,13 @@
 
 <div id="page">
     <header>
-        <MenuButton text="Home" endpoint="/"/>
-        <MenuButton text="Play" endpoint="/play"/>
-        <MenuButton text="Login" endpoint="/login" />
+        <div class="buttons">
+            <MenuButton text="Home" endpoint="/"/>
+            <MenuButton text="Play" endpoint="/play"/>
+        </div>
+        <div class="buttons">
+            <MenuButton text="Login" endpoint="/login" />
+        </div>
     </header>
 
     <div id="content">
@@ -26,6 +30,7 @@
         border: 0;
         padding: 0;
         display: flex;
+        justify-content: space-between;
     }
 
     :global(html){
@@ -34,5 +39,9 @@
 
     #content{
         margin: 10px;
+    }
+
+    .buttons {
+        display: inline-flex;
     }
 </style>

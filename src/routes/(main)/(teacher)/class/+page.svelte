@@ -1,0 +1,1 @@
+<h1>This is your class page</h1>
