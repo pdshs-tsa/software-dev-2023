@@ -161,7 +161,7 @@ class Database {
         //TODO: reduce this to one array pass
         const trimmedarr = arr.filter(obj => {
             const value = compareTwoStrings(obj.value.title.toLowerCase(), query);
-            return value > 0.5;
+            return value > 0.65;
         });
 
         //TODO: optimize this, way too slow
@@ -179,6 +179,24 @@ class Database {
 
             return 0;
         });
+    }
+
+    /**
+     * Get the user's class from username
+     * @param {string} username the username
+     * @returns {Promise<unknown>} null if the class isn't found
+     */
+    async getClassFromUsername(username) {
+        const user = await users.get(username);
+        const code = user.class;
+        return this.getClassFromCode(code);
+    }
+
+    async getClassFromCode(code){
+        if (code == null || !(await classes.has(code))) {
+            return null
+        }
+        return await classes.get(code);
     }
 }
 
