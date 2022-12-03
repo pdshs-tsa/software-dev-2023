@@ -4,7 +4,7 @@
 
     const dispatch = createEventDispatcher();
     let collapsed = false;
-    $: buttonText = "Hide"
+    $: buttonText = (collapsed) ? "Show" : "Hide";
 
     export let data = {
         prompt: '',
@@ -14,7 +14,6 @@
 
     function switchStatus(){
         collapsed = !collapsed;
-        (collapsed) ? buttonText = "Show" : buttonText = "Hide";
     }
 
     function remove() {

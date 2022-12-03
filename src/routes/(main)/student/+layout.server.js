@@ -10,8 +10,8 @@ export async function load({ cookies }) {
         throw redirect(303, '/login');
     }
 
-    if (user.accounttype === 'Student'){
-        throw redirect(303, '/student/class');
+    if (user.accounttype === 'Teacher'){
+        throw redirect(303, '/home');
     }
 
     return {

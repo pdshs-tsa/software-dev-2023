@@ -214,13 +214,39 @@ class Database {
             owner: user.username,
             password: classPassword,
             code: code,
-            students: [],
-            assigned: []
+            assigned: [],
+            students: []
         }
 
         await classes.set(code, data);
         await users.set(`${user.username}.class`, code);
         return code;
+    }
+
+    /**
+     * Checks if a password for a class code is correct
+     * @param {string} code class to check
+     * @param {string} password password to check
+     * @return {Promise<boolean>} if the password is correct
+     */
+    async verifyClassPassword(code, password){
+        const classData = await this.getClassFromCode(code);
+        if (classData === null) return false;
+        return classData.password === password;
+    }
+
+    /**
+     * Adds a student to a class
+     * @param {string} username the username to add
+     * @param {string} code the code of the class
+     * @return {Promise<void>}
+     */
+    async addStudentToClass(username, code) {
+        const data = {
+            username: username,
+            scores: []
+        }
+        await classes.push(`${code}.students`, data);
     }
 }
 

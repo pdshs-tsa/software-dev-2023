@@ -42,13 +42,15 @@
         </div>
         {#if form?.missingAccountType} <p class="error">This field is required</p> {/if}
 
-        <div class="centered">
-            {#if selected === "Student"}
-                <input name="class-code" class="info" type="text" placeholder="Class Code">
-            {/if}
-        </div>
+        {#if selected === "Student"}
+            <input name="class-code" class="info" type="text" placeholder="Class Code">
+            <input name="class-pass" class="info" type="text" placeholder="Class Password">
+        {/if}
         {#if form?.missingClassCode}
             <p class="error">This field is required, ask your teacher for a code</p>
+        {/if}
+        {#if form?.incorrectClassPass}
+            <p class="error">The class password is incorrect, check with your teacher</p>
         {/if}
 
         <div class="centered">

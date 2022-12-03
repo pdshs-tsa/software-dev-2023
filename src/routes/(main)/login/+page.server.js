@@ -20,5 +20,12 @@ export const actions = {
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies }) {
     const user = await database.getUserFromSession(cookies.get('sessionid'));
-    if (user != null) throw new redirect('303', '/home');
+    if (user != null) {
+        if (user.accounttype === 'Teacher') {
+            throw new redirect('303', '/home');
+        } else {
+            throw new redirect('303', '/student/class');
+        }
+
+    }
 }

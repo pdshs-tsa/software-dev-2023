@@ -2,7 +2,7 @@
     import { slide } from 'svelte/transition';
 
     let collapsed = true;
-    $: buttonText = "Show"
+    $: buttonText = (collapsed) ? "Show" : "Hide";
 
     export let data = {
         prompt: '',
@@ -12,7 +12,6 @@
 
     function switchStatus(){
         collapsed = !collapsed;
-        (collapsed) ? buttonText = "Show" : buttonText = "Hide";
     }
 </script>
 

@@ -1,7 +1,9 @@
 <script>
     import {page} from '$app/stores';
+    import StudentOverview from "../../../../../libs/StudentOverview.svelte";
 
     const classdata = $page.data.data;
+    console.log(classdata);
     const user = $page.data.user;
 </script>
 
@@ -26,8 +28,9 @@
         </div>
     </div>
     <div class="students">
+        <h4 style="text-align: center">Student Data</h4>
         {#each classdata.students as student}
-            
+            <StudentOverview data="{student}" />
         {/each}
     </div>
 </div>
@@ -40,8 +43,8 @@
     .students {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         flex: 2;
+        margin-top: 0;
     }
 
     .infobox {
@@ -59,5 +62,9 @@
         text-align: center;
         font-size: x-large;
         margin: auto
+    }
+
+    h4 {
+        margin: 0;
     }
 </style>
