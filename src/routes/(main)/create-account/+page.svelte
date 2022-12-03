@@ -24,6 +24,7 @@
         <input name="username" class="info" type="text" placeholder="Username">
         {#if form?.missingUsername} <p class="error">This field is required</p> {/if}
         {#if form?.takenUsername} <p class="error">This username is taken</p> {/if}
+        {#if form?.invalidUsername} <p class="error">This username contains invalid characters</p> {/if}
 
         <input name="password" class="info" type="password" placeholder="Password">
         {#if form?.missingPassword} <p class="error">This field is required</p> {/if}

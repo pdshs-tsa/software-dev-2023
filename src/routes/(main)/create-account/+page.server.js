@@ -13,9 +13,13 @@ export const actions = {
         const accounttype = data.get('account-type');
         let classcode = '';
 
+        if (username)
+
         if (accounttype === "Student"){
             classcode = data.get('class-code');
         }
+
+        if (!isAlphaNumeric(username)) return invalid(400, {invalidUsername: true});
 
         if (await database.checkIfUserExists(username)) return invalid(400, {takenUsername: true});
 
@@ -39,3 +43,17 @@ export const actions = {
         throw redirect(302, '/login');
     }
 }
+
+function isAlphaNumeric(str) {
+    var code, i, len;
+
+    for (i = 0, len = str.length; i < len; i++) {
+        code = str.charCodeAt(i);
+        if (!(code > 47 && code < 58) && // numeric (0-9)
+            !(code > 64 && code < 91) && // upper alpha (A-Z)
+            !(code > 96 && code < 123)) { // lower alpha (a-z)
+            return false;
+        }
+    }
+    return true;
+};

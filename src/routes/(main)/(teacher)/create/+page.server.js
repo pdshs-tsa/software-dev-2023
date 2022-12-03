@@ -1,6 +1,6 @@
-/** @type {import('./$types').Actions} */
 import database from "../../../../libs/server/database.js";
 
+/** @type {import('./$types').Actions} */
 export const actions = {
     default: async ({cookies, request}) => {
         const formData = await request.formData();

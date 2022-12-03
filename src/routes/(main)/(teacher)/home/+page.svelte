@@ -3,14 +3,15 @@
     import { page } from '$app/stores'
 
     const user = $page.data.user;
-    const sets = $page.data.sets;
+    const sets = $page.data.sets.reverse();
+    const copy = Array.from(sets);
 </script>
 
-<h2>Your Sets</h2>
+<h2>{user.username}'s Sets</h2>
 
 <div class="setbox">
     {#if sets != null}
-        {#each sets as set}
+        {#each copy as set}
             <SetOverviewCard data="{set}" />
         {/each}
     {/if}

@@ -198,6 +198,30 @@ class Database {
         }
         return await classes.get(code);
     }
+
+    async createClass(user, password) {
+        const classPassword = password;
+
+        //generate unique alphanumeric code
+        let random = 0;
+        let code = '';
+        while (random === 0 && !(await classes.has(code))) {
+            random = Math.random();
+            code = random.toString(36).slice(2, 7)
+        }
+
+        const data = {
+            owner: user.username,
+            password: classPassword,
+            code: code,
+            students: [],
+            assigned: []
+        }
+
+        await classes.set(code, data);
+        await users.set(`${user.username}.class`, code);
+        return code;
+    }
 }
 
 const database = new Database();
