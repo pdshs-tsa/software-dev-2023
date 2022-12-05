@@ -7,7 +7,9 @@
             {
                 uuid: '0',
                 name: '',
-                score: 0
+                correct: 0,
+                total: 0,
+                started: false
             }
         ]
     }
@@ -22,17 +24,17 @@
 
 <div class="body">
     <div style="display: flex;">
-        <h5 style="margin: auto auto auto 0;">{data.username}</h5>
+        <h5 style="margin: auto auto auto 5%;">{data.username}</h5>
         <button on:click={() => switchStatus()} class="button">{buttonText}</button>
     </div>
 
     {#if !collapsed}
-        <div transition:slide|local>
-            {#each data.scores as scoreData}
-                <div>
-                    Score on {scoreData.name}: {scoreData.score}
-                </div>
-            {/each}
+        <div class="scores" transition:slide|local>
+            <ul>
+                {#each data.scores as scoreData}
+                    <li>{scoreData.name}: {#if scoreData.started}{Math.round((scoreData.correct / scoreData.total) * 100)}%{:else}Not Started{/if}</li>
+                {/each}
+            </ul>
         </div>
     {/if}
 </div>
@@ -54,5 +56,10 @@
         border: 0;
         color: #73828c;
         width: fit-content;
+    }
+
+    .scores {
+        padding: 1px;
+        margin-left: 10%;
     }
 </style>
