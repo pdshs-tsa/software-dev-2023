@@ -1,20 +1,13 @@
 <script>
     //eslint-disable-next-line no-unused-vars
     import pico from '@picocss/pico'
-    import MenuButton from "../../libs/MenuButton.svelte";
+    import MenuButton from "../../libs/common/MenuButton.svelte";
+    import NoAccountHeader from "../../libs/common/NoAccountHeader.svelte";
     //color palette- https://coolors.co/98c1d9-f17105-d11149-6610f2-1a8fe3
 </script>
 
 <div id="page">
-    <header>
-        <div class="buttons">
-            <MenuButton text="Home" endpoint="/"/>
-            <MenuButton text="Play" endpoint="/play"/>
-        </div>
-        <div class="buttons">
-            <MenuButton text="Login" endpoint="/login" />
-        </div>
-    </header>
+    <NoAccountHeader />
 
     <div id="content">
         <slot/>
@@ -22,26 +15,11 @@
 </div>
 
 <style>
-    header {
-        background-color: #98c1d9;
-        color: white;
-        width: 100%;
-        margin: 0;
-        border: 0;
-        padding: 0;
-        display: flex;
-        justify-content: space-between;
-    }
-
     :global(html){
-        overflow-y: clip;
+        overflow-y: auto;
     }
 
     #content{
         margin: 10px;
-    }
-
-    .buttons {
-        display: inline-flex;
     }
 </style>

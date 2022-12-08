@@ -1,8 +1,7 @@
 <script>
     import { page } from '$app/stores'
     import {goto} from "$app/navigation";
-    import SetOverviewCard from "../../../../libs/SetOverviewCard.svelte";
-    const user = $page.data.user;
+    import SetOverviewCard from "../../../../libs/common/SetOverviewCard.svelte";
     $: arr = $page.data.arr;
 
     let q = '';

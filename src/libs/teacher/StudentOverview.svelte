@@ -32,7 +32,7 @@
         <div class="scores" transition:slide|local>
             <ul>
                 {#each data.scores as scoreData}
-                    <li>{scoreData.name}: {#if scoreData.started}{Math.round((scoreData.correct / scoreData.total) * 100)}%{:else}Not Started{/if}</li>
+                    <li><a href={`/set/${scoreData.uuid}`}>{scoreData.name}</a>: {#if scoreData.started}{Math.round((scoreData.correct / scoreData.total) * 100)}%{:else}Not started{/if}</li>
                 {/each}
             </ul>
         </div>

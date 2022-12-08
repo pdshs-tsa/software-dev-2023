@@ -1,8 +1,10 @@
 <script>
     import {page} from '$app/stores';
-    import StudentOverview from "../../../../../libs/StudentOverview.svelte";
+    import StudentOverview from "../../../../../libs/teacher/StudentOverview.svelte";
+    import {goto} from "$app/navigation";
 
     const classdata = $page.data.data;
+    const asssigned = $page.data.assigned
     console.log(classdata);
     const user = $page.data.user;
 </script>
@@ -17,14 +19,14 @@
         <div class="info">
             <p>Assigned Sets</p>
             <ul>
-                {#if classdata.assigned != null}
-                    {#each classdata.assigned as set}
-                        <li>{set.name}</li>
+                {#if asssigned != null}
+                    {#each asssigned as setdata}
+                        <li><a href={`/set/${setdata.uuid}`}>{setdata.set.title}</a></li>
                     {/each}
                 {/if}
             </ul>
 
-            <button>Assign new</button>
+            <button on:click={async () => await goto(`/class/${classdata.code}/assign`)}>Assign new</button>
         </div>
     </div>
     <div class="students">

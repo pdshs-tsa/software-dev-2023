@@ -1,3 +1,5 @@
+<svelte:options accessors={true}/>
+
 <script>
     import {goto} from "$app/navigation";
 
@@ -18,12 +20,12 @@
 
     const sampleQuestions = data.data.slice(0, (data.data.length < 3) ? data.data.length : 2);
 
-    function navigateToSet(){
+    export let onClick = () => {
         goto(`/set/${data.uuid}`);
     }
 </script>
 
-<div class="body" on:click={navigateToSet} on:keydown={navigateToSet}>
+<div class="body" on:click={onClick} on:keydown={onClick}>
     <div class="centered">
         <h3>{data.title}</h3>
     </div>

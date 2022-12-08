@@ -1,5 +1,5 @@
 <script>
-    import SetComponent from "../../../../libs/SetComponent.svelte";
+    import SetComponent from "../../../../libs/common/SetComponent.svelte";
     import { slide } from 'svelte/transition';
     import {applyAction, deserialize} from "$app/forms";
     import {goto, invalidateAll} from "$app/navigation";

@@ -24,7 +24,7 @@ export async function load({ cookies }) {
         if (user.accounttype === 'Teacher') {
             throw new redirect('303', '/home');
         } else {
-            throw new redirect('303', '/student/class');
+            throw new redirect('303', '/student/home');
         }
 
     }

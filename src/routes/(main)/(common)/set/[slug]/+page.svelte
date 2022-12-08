@@ -1,6 +1,6 @@
 <script>
     import { slide } from 'svelte/transition';
-    import SetComponentUneditable from "../../../../../libs/SetComponentUneditable.svelte";
+    import SetComponentUneditable from "../../../../../libs/common/SetComponentUneditable.svelte";
     import { page } from '$app/stores'
 
     const user = $page.data.user;

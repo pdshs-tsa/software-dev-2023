@@ -1,17 +1,16 @@
 <script>
-    import SetOverviewCard from "../../../../libs/SetOverviewCard.svelte";
+    import SetOverviewCard from "../../../../libs/common/SetOverviewCard.svelte";
     import { page } from '$app/stores'
 
     const user = $page.data.user;
-    const sets = $page.data.sets.reverse();
-    const copy = Array.from(sets);
+    const sets = $page.data.sets;
 </script>
 
 <h2>{user.username}'s Sets</h2>
 
 <div class="setbox">
     {#if sets != null}
-        {#each copy as set}
+        {#each sets as set}
             <SetOverviewCard data="{set}" />
         {/each}
     {/if}
@@ -32,5 +31,9 @@
     hr {
         margin: 5px;
         border: 1px solid lightgrey;
+    }
+
+    h2 {
+        margin-bottom: 20px;
     }
 </style>

@@ -14,7 +14,14 @@ export async function load({ cookies }) {
         throw redirect(303, '/home');
     }
 
+    const classdata = await database.getClassFromUsername(user.username);
+    const data = classdata.students.find((element) => {
+        return element.username === user.username;
+
+    });
+
     return {
-        user: user
+        user: user,
+        class: data
     }
 }

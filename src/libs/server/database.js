@@ -2,6 +2,7 @@ import {QuickDB} from 'quick.db';
 import * as argon2 from 'argon2';
 import {v4 as uuidv4} from 'uuid';
 import {compareTwoStrings} from "string-similarity";
+import {error} from "@sveltejs/kit";
 
 const users = new QuickDB({filePath: "./users.sqlite"});
 // eslint-disable-next-line no-unused-vars
@@ -182,9 +183,9 @@ class Database {
     }
 
     /**
-     * Get the user's class from username
+     * Get the user's home from username
      * @param {string} username the username
-     * @returns {Promise<unknown>} null if the class isn't found
+     * @returns {Promise<unknown>} null if the home isn't found
      */
     async getClassFromUsername(username) {
         const user = await users.get(username);
@@ -224,8 +225,8 @@ class Database {
     }
 
     /**
-     * Checks if a password for a class code is correct
-     * @param {string} code class to check
+     * Checks if a password for a home code is correct
+     * @param {string} code home to check
      * @param {string} password password to check
      * @return {Promise<boolean>} if the password is correct
      */
@@ -236,17 +237,47 @@ class Database {
     }
 
     /**
-     * Adds a student to a class
+     * Adds a student to a home
      * @param {string} username the username to add
-     * @param {string} code the code of the class
+     * @param {string} code the code of the home
      * @return {Promise<void>}
      */
     async addStudentToClass(username, code) {
         const data = {
             username: username,
-            scores: []
+            scores: [],
+            stats: {
+                total: 0,
+                correct: 0,
+                completed: 0
+            }
         }
         await classes.push(`${code}.students`, data);
+    }
+
+    /**
+     * Assigns a set to the given home
+     * @param {string} classcode the home code to assign the set to
+     * @param {string} uuid the uuid of the set
+     */
+    async assignSet(classcode, uuid){
+        const current = await classes.get(`${classcode}.assigned`);
+        if (current.includes(uuid)) return;
+        await classes.push(`${classcode}.assigned`, uuid);
+        const set = await sets.get(uuid);
+        const studentData = await classes.get(`${classcode}.students`);
+        if (!(studentData instanceof Array)) throw new error(500, "Could not assign sets to all students.");
+        studentData.map((student) => {
+            student.scores.push({
+                uuid: uuid,
+                name: set.title,
+                correct: 0,
+                total: 0,
+                started: false
+            })
+            return student;
+        });
+        await classes.set(`${classcode}.students`, studentData);
     }
 }
 

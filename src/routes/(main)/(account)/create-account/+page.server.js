@@ -29,7 +29,7 @@ export const actions = {
         if (!password) return invalid(400, {missingPassword: true});
         if (password !== verifypassword) return invalid(400, {notMatchingPasswords: true});
         if (!accounttype) return invalid(400, {missingAccountType: true});
-        if (accounttype === 'Student' && !classcode) return invalid(400, {accounttype: accounttype, missingClassCode: true});
+        if (accounttype === 'Student' && (classcode === '' || classcode == null)) return invalid(400, {accounttype: accounttype, missingClassCode: true});
         if (accounttype === 'Student' && !await database.verifyClassPassword(classcode, classpassword)) return invalid(400, {accounttype: accounttype, incorrectClassPass: true});
 
         const hash = await argon2.hash(password);
