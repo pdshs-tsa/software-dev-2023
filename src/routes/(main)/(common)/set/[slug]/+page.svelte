@@ -2,8 +2,9 @@
     import { slide } from 'svelte/transition';
     import SetComponentUneditable from "../../../../../libs/common/SetComponentUneditable.svelte";
     import { page } from '$app/stores'
+    import {goto} from "$app/navigation";
 
-    const user = $page.data.user;
+    const type = $page.data.type;
     const set = $page.data.set;
 </script>
 
@@ -17,6 +18,10 @@
             <li>Created by {set.author}</li>
             <li>{new Date(set.timestamp).toDateString()}</li>
         </ul>
+
+        {#if type === "Student"}
+            <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
+        {/if}
     </div>
 
     <div id="create-questions">
