@@ -17,28 +17,22 @@
         .map(({ value }) => value);
     $: correct = current.correct;
 
-     async function submitButton(content) {
-        if (correct === content){
-            prompt = "Correct!";
-            numCorrect++;
-        } else {
-            prompt = "Incorrect :("
-        }
+    let displayScreen = false;
+    let chosen = '';
 
-        await new Promise(r => setTimeout(r, 2000));
-        await next();
+     async function submitButton(content) {
+        chosen = content;
+        displayScreen = true;
     }
 
     async function next(){
+        displayScreen = false;
+        if (chosen === correct) numCorrect++;
         if (setIndex + 1 >= set.data.length) {
             await goto(`/set/${set.uuid}`);
             return;
         }
         setIndex++;
-    }
-
-    async function terminate() {
-
     }
 </script>
 
@@ -55,6 +49,21 @@
         {/each}
     </div>
 </div>
+
+{#if displayScreen}
+    <div id="answer-overview" on:click={next}>
+        <div>
+            <h1 style="margin: auto;">{(chosen === correct) ? "Correct!" : "Incorrect :("}</h1>
+        </div>
+        <div>
+            <p class="answer-overview-body">You chose <strong>{chosen}</strong></p>
+            <p class="answer-overview-body">The correct answer was <strong>{correct}</strong></p>
+        </div>
+        <div>
+            <p style="margin-bottom: 0"><u>Click to continue...</u></p>
+        </div>
+    </div>
+{/if}
 
 <style>
     .body {
@@ -108,5 +117,30 @@
         margin-top: 20px;
         text-align: center;
         font-size: xxx-large;
+    }
+
+    #answer-overview {
+        background-color: rgba(246, 246, 246, 0.97);
+        color: black;
+        position: fixed;
+        width: 50%;
+        height: 50%;
+        border-radius: 16px;
+        text-align: center;
+        top: 25%;
+        left: 50%;
+        padding: 20px;
+        transform: translate(-50%, 0);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    #answer-overview:hover {
+        cursor: pointer;
+    }
+
+    .answer-overview-body {
+        margin: auto;
     }
 </style>

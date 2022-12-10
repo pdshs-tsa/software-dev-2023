@@ -6,6 +6,7 @@
     import { page } from '$app/stores'
 
     $: components = [{ prompt: '', answers: ['', '', '', ''], correct: '' }];
+    $: props = [];
     const user = $page.data.user;
     let valid = true;
 
@@ -27,14 +28,31 @@
         components = components;
     }
 
+    function autofillAnswers(){
+        if (components.length < 4) return;
+        for (const comp of components){
+            for (let i = 0; i < 4; i++){
+                if (comp.answers[i] !== '') continue;
+                if (comp.answers[i] === comp.correct) continue;
+                let answer = components[randomInteger(0, components.length)].answers[randomInteger(0, 5)];
+                while (comp.answers.includes(answer) || answer === '' || answer == null){
+                    answer = components[randomInteger(0, components.length)].answers[randomInteger(0, 5)];
+                }
+
+                comp.answers[i] = answer;
+            }
+        }
+        components = components;
+    }
+
     async function handleSubmit(event){
 
         //init form data container
         let formData = new FormData(this);
 
         //check if everything is filled out
-        valid = true;
-        if (formData.get('name') === '' || formData.get('desc') === '') valid = false;
+
+        valid = !(formData.get('name') === '' || formData.get('desc') === '');
         if (components.length < 1) valid = false;
         for (const i of components) {
             if (i.prompt === '' || i.correct === '') {
@@ -81,6 +99,14 @@
         await applyAction(result);
         await goto('/set/' + result.data.set);
     }
+
+    function randomInteger(min, max) {
+        let num = Math.floor(Math.random() * (max - min + 1)) + min;
+        if (num === max){
+            return randomInteger(min, max);
+        }
+        return num;
+    }
 </script>
 
 <div class="body">
@@ -89,6 +115,7 @@
         <form method="POST" on:submit|preventDefault={handleSubmit}>
             <input type="text" class="textbox" placeholder="Name" name="name">
             <input type="text" class="textbox" placeholder="Description" name="desc">
+            <button type="button" on:click={autofillAnswers}>Autofill choices</button>
             <button type="submit">Create</button>
         </form>
 
@@ -99,9 +126,9 @@
     </div>
 
     <div id="create-questions">
-        {#each components as part}
+        {#each components as part, i}
             <div transition:slide|local>
-                <SetComponent bind:data={part} on:remove={removeComponent}/>
+                <SetComponent bind:data={part} bind:this={props[i]} on:remove={removeComponent}/>
             </div>
         {/each}
         <button on:click={() => addComponent()}>Add</button>
