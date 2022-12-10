@@ -1,14 +1,20 @@
 <script>
     import {page} from "$app/stores";
     import {goto} from "$app/navigation";
+    import {fly} from 'svelte/transition';
 
     const user = $page.data.user;
     const set = $page.data.set;
     let setIndex = 0;
     let numCorrect = 0;
 
+    let questions = set.data
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+
     //set variables
-    $: current = set.data[setIndex];
+    $: current = questions[setIndex];
     $: prompt = current.prompt;
     //shuffle
     $: answers = current.answers
@@ -51,7 +57,7 @@
 </div>
 
 {#if displayScreen}
-    <div id="answer-overview" on:click={next}>
+    <div id="answer-overview" on:click={next} on:keypress={next} in:fly={{ y: 25, duration: 250 }}>
         <div>
             <h1 style="margin: auto;">{(chosen === correct) ? "Correct!" : "Incorrect :("}</h1>
         </div>
