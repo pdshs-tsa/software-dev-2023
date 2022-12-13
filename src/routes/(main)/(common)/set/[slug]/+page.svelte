@@ -22,6 +22,9 @@
         {#if type === "Student"}
             <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
         {/if}
+        {#if type === "Teacher"}
+            <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
+        {/if}
     </div>
 
     <div id="create-questions">

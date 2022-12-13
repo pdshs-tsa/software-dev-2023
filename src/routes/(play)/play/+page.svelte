@@ -6,7 +6,7 @@
     <div class="body" in:fly={{ y: 25, duration: 250 }}>
         <h1>Join a Game</h1>
         <form method="POST">
-            <input id="code-input" type="number" placeholder="Game ID">
+            <input name="code" id="code-input" type="number" placeholder="Game ID">
             <button id="code-submit" type="submit">Go!</button>
         </form>
     </div>
