@@ -1,8 +1,7 @@
-import ioClient from "socket.io-client";
-const ENDPOINT = "http://localhost:5173";
+import io from "socket.io-client";
 
-const socket = ioClient(ENDPOINT);
+const socket1 = io('http://localhost:5173');
 
 console.log("loaded");
 
-export const io = socket;
+export const socket = socket1;
