@@ -23,7 +23,7 @@
             <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
         {/if}
         {#if type === "Teacher"}
-            <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
+            <button on:click={() => goto(`/play/host?set=${set.uuid}`)}>Host</button>
         {/if}
     </div>
 
