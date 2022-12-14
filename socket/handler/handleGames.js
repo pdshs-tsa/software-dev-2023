@@ -35,7 +35,6 @@ const createGame = async function (setuuid) {
 
 const attemptGameJoin = function (code) {
     const socket = this;
-    console.log(code);
     socket.emit('ack:prejoin', code in games);
 };
 
@@ -45,7 +44,10 @@ const registerPlayer = function (code, username) {
         socket.emit('ack:join', 0);
         return;
     }
-    games[code].players.push(username);
+    games[code].players.push({
+        id: socket.id,
+        username: username
+    });
     const gameData = games[code];
     socket.emit('ack:join', gameData);
     socket.join(code);
@@ -58,9 +60,27 @@ const destroyGame = function (code) {
     io.to(code).emit('end', code);
 }
 
+const clientDisconnect = function () {
+    const socket = this;
+    let code;
+    for (const roomid of socket.rooms){
+        if (roomid in games) {
+            code = roomid;
+            break;
+        }
+    }
+    if (games[code].hostsocket === socket.id) {
+        destroyGame();
+        return;
+    }
+
+    io.to(code).emit('player-leave', games[code].players.find((element) => element.id === socket.id).username);
+}
+
 export {
     init,
     registerPlayer,
     attemptGameJoin,
-    createGame
+    createGame,
+    clientDisconnect
 }

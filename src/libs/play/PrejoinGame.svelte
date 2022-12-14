@@ -1,23 +1,24 @@
 <script>
     import {fly} from "svelte/transition"
-    import {socket} from "../socket/socket.js";
+    import {socket} from "../common/socket/socket.js";
 
+    export let gamestatus = false;
     export let code = '';
-    export let username = '';
 
-    socket.on('ack:join', (data) => {
+    socket.on('ack:prejoin', (data) => {
         console.log(data);
+        gamestatus = data;
     });
 
     function submitGame() {
-        socket.emit('join', code, username);
+        socket.emit('prejoin', code);
     }
 </script>
 
 <div class="background">
     <div class="body" in:fly={{ y: 25, duration: 250 }}>
-        <h1>Enter your username</h1>
-        <input name="code" id="code-input" type="number" placeholder="Game ID" bind:value={username}>
+        <h1>Join a Game</h1>
+        <input name="code" id="code-input" type="number" placeholder="Game ID" bind:value={code}>
         <button id="code-submit" on:click={submitGame}>Go!</button>
     </div>
 </div>

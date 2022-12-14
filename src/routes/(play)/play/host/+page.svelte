@@ -2,7 +2,7 @@
     import {socket} from '../../../../libs/common/socket/socket'
     import {page} from "$app/stores";
 
-    const players = [];
+    let players = [];
 
     const set = $page.data.set;
     const host = $page.data.user;
@@ -13,6 +13,7 @@
 
     socket.on('player-join', (username) => {
         players.push(username);
+        players = players;
     });
 
     socket.on('ack:host', (resp) => {
