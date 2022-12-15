@@ -54,8 +54,11 @@ const registerPlayer = function (code, username) {
 
 const destroyGame = function (code) {
     const socket = this;
-    delete games[code];
     io.to(code).emit('end', code);
+    games[code].players.forEach((element) => {
+       io.sockets.sockets.get(element.id).leave(code);
+    });
+    delete games[code];
 }
 
 const clientDisconnect = function () {
@@ -70,12 +73,23 @@ const clientDisconnect = function () {
             destroyGame(code);
             return;
         }
+        io.to(code).emit('player-leave', games[code].players.find((element) => element.id === socket.id).username);
     } catch (err){
         console.log('Attempted to destroy a game that already was gone.');
-        return;
     }
+}
 
-    io.to(code).emit('player-leave', games[code].players.find((element) => element.id === socket.id).username);
+const kickPlayer = function (code, username) {
+    const socket = this;
+    console.log(games[code]);
+    for (const player of games[code].players) {
+        if (player.username === username){
+            io.to(player.id).emit('end');
+            io.to(code).emit('player-leave', username);
+            games[code].players.splice(games[code].players.indexOf(player), 1);
+            break;
+        }
+    }
 }
 
 export {
@@ -83,5 +97,6 @@ export {
     registerPlayer,
     attemptGameJoin,
     createGame,
-    clientDisconnect
+    clientDisconnect,
+    kickPlayer
 }

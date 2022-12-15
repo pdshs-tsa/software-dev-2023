@@ -30,6 +30,7 @@ export default function injectSocketIO(server) {
         socket.on('prejoin', gameHandler.attemptGameJoin);
         socket.on('join', gameHandler.registerPlayer);
         socket.on('disconnecting', gameHandler.clientDisconnect);
+        socket.on('kick', gameHandler.kickPlayer);
     }
 
     // Socket.IO stuff goes here

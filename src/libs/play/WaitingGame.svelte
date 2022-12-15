@@ -3,13 +3,16 @@
     import {socket} from "../common/socket/socket.js";
 
     export let gameData = {};
+    let players = [];
 
-    export let players = [];
-    console.log(gameData);
+    for (const p of gameData.players) {
+        players.push(p.username);
+        players = players;
+    }
 
-    socket.once('end', () => {
+    socket.on('end', () => {
         goto('/');
-    })
+    });
 </script>
 
 <h1>{gameData.set.title}</h1>
