@@ -26,14 +26,14 @@ export default function injectSocketIO(server) {
     gameHandler.init(io);
 
     const onConnection = (socket) => {
-        socket.on('host', gameHandler.createGame);
-        socket.on('prejoin', gameHandler.attemptGameJoin);
-        socket.on('join', gameHandler.registerPlayer);
-        socket.on('disconnecting', gameHandler.clientDisconnect);
-        socket.on('kick', gameHandler.kickPlayer);
+        //pregame events
+        socket.on('host', gameHandler.createGame); //create game
+        socket.on('prejoin', gameHandler.attemptGameJoin); //check if code is here
+        socket.on('join', gameHandler.registerPlayer); //attempt to join game
+        socket.on('disconnecting', gameHandler.clientDisconnect); //client disconnect, either player or host
+        socket.on('kick', gameHandler.kickPlayer); //host kick player
     }
 
-    // Socket.IO stuff goes here
     io.on('connection', (socket) => {
         onConnection(socket);
     });
