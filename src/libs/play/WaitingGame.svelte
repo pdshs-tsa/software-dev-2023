@@ -10,15 +10,57 @@
         players = players;
     }
 
+    socket.on('player-join', (username) => {
+        players.push(username);
+        players = players;
+    })
+
     socket.on('end', () => {
         goto('/');
     });
 </script>
 
-<h1>{gameData.set.title}</h1>
+<div class="body">
+    <div class="set-overview">
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+        <h1>{gameData.set.title}</h1>
+    </div>
+    <hr/>
+    <div class="players">
 
-<ul>
-    {#each players as player}
-        <li>{player}</li>
-    {/each}
-</ul>
+    </div>
+</div>
+
+<style>
+    .body {
+        display: flex;
+        height: 100vh;
+        background: linear-gradient(140deg, rgba(175,212,233,1) 0%, rgba(120,154,173,1) 51%, rgba(53,82,98,1) 100%);
+        padding: 10px;
+    }
+
+    .set-overview {
+        display: flex;
+        flex-direction: column;
+        flex: 3;
+        max-height: 100%;
+        overflow: auto;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 3px;
+    }
+
+    .players {
+        display: flex;
+        flex: 1;
+    }
+
+    hr {
+        border: 1px solid gray;
+    }
+</style>

@@ -54,7 +54,6 @@
 
 <style>
     .background {
-        background: rgb(175,212,233);
         background: linear-gradient(140deg, rgba(175,212,233,1) 0%, rgba(120,154,173,1) 51%, rgba(53,82,98,1) 100%);
         height: 100vh;
         display: flex;
