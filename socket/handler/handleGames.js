@@ -38,18 +38,33 @@ const attemptGameJoin = function (code) {
 
 const registerPlayer = function (code, username) {
     const socket = this;
+
+    //check if code exists
     if (!(code in games)) {
         socket.emit('ack:join', 0);
         return;
     }
+
+    //username checks
+    username = username.trim();
+    if (username.length > 16) username = username.substring(0, 17);
+    for (const p of games[code].players){
+        if (p.username === username){
+            socket.emit('ack:join', 0);
+            return;
+        }
+    }
+
+    //register player obj
     games[code].players.push({
         id: socket.id,
         username: username
     });
-    const gameData = games[code];
-    socket.emit('ack:join', gameData);
-    socket.join(code);
+
+    //emit join events
+    socket.emit('ack:join', games[code]);
     socket.to(code).emit('player-join', username);
+    socket.join(code);
 };
 
 const destroyGame = function (code) {
@@ -66,14 +81,16 @@ const clientDisconnect = function () {
     const rooms = Array.from(socket.rooms);
     const code = rooms.find((element) => element in games)
     //not joined a game
-    if (code === null) return;
+    if (code === undefined) return;
 
     try {
         if (games[code].hostsocket === socket.id) {
             destroyGame(code);
             return;
         }
-        io.to(code).emit('player-leave', games[code].players.find((element) => element.id === socket.id).username);
+        const player = games[code].players.find((element) => element.id === socket.id);
+        io.to(code).emit('player-leave', player.username);
+        games[code].players.splice(games[code].players.indexOf(player), 1);
     } catch (err){
         console.log('Attempted to destroy a game that already was gone.');
     }
@@ -81,10 +98,10 @@ const clientDisconnect = function () {
 
 const kickPlayer = function (code, username) {
     const socket = this;
-    console.log(games[code]);
     for (const player of games[code].players) {
         if (player.username === username){
             io.to(player.id).emit('end');
+            io.sockets.sockets.get(player.id).leave(code);
             io.to(code).emit('player-leave', username);
             games[code].players.splice(games[code].players.indexOf(player), 1);
             break;

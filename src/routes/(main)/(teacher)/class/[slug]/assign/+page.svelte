@@ -15,7 +15,6 @@
     }
 
     function onClickCard(data) {
-        console.log(data);
         goto(`/class/${classdata.code}/assign?set=${data.uuid}`);
     }
 </script>

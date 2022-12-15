@@ -5,7 +5,6 @@
 
     const classdata = $page.data.data;
     const asssigned = $page.data.assigned
-    console.log(classdata);
     const user = $page.data.user;
 </script>
 

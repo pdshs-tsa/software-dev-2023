@@ -1,7 +1,7 @@
 <script>
-    import PrejoinGame from "../../../libs/play/PrejoinGame.svelte";
-    import JoinGame from "../../../libs/play/JoinGame.svelte";
-    import WaitingGame from "../../../libs/play/WaitingGame.svelte";
+    import PrejoinGame from "../../../libs/common/play/PrejoinGame.svelte";
+    import JoinGame from "../../../libs/common/play/JoinGame.svelte";
+    import WaitingGame from "../../../libs/common/play/WaitingGame.svelte";
 
     let gamecode = 0;
     let username = '';
@@ -20,5 +20,5 @@
 {:else if status === 1}
     <JoinGame code="{gamecode}" bind:username={username} bind:gameData={gameData}/>
 {:else if status === 2}
-    <WaitingGame gameData="{gameData}"/>
+    <WaitingGame gameData="{gameData}" code="{gamecode}"/>
 {/if}

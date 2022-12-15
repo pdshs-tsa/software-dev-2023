@@ -23,7 +23,6 @@
 
     function removeComponent(event) {
         let index = components.indexOf(event.detail.component);
-        console.log(components[0]);
         components.splice(index, 1);
         components = components;
     }
@@ -72,8 +71,6 @@
                 }
             }
         }
-
-        console.log(valid);
 
         if (!valid) return;
 

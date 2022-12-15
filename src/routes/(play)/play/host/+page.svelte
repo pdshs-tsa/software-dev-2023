@@ -35,8 +35,8 @@
 
 <div class="background">
     <div class="box title">
-        <h2 style='font-family: "Courier New", "monospace"; margin: auto; padding: 0'>Code: <strong>{code}</strong></h2>
-        <h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/host')[0]} to join</h6>
+        <h1 style="margin: auto;">Code: {code}</h1>
+        {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/host')[0]} to join</h6>{/if}
     </div>
 
     <div class="body">
@@ -79,7 +79,7 @@
     .body {
         display: flex;
         flex-wrap: wrap;
-        width: 100%;
+        width: 80%;
         justify-content: center;
     }
 

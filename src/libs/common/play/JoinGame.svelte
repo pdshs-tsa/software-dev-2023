@@ -1,26 +1,34 @@
 <script>
     import {fly} from "svelte/transition"
-    import {socket} from "../common/socket/socket.js";
+    import {socket} from "../socket/socket.js";
 
-    export let gamestatus = false;
     export let code = '';
+    export let username = '';
+    export let gameData = {};
+    let invalid = false;
 
-    socket.on('ack:prejoin', (data) => {
-        console.log(data);
-        gamestatus = data;
+    socket.on('ack:join', (data) => {
+        if (data !== 0) {
+            gameData = data;
+        } else {
+            invalid = true;
+        }
     });
 
     function submitGame() {
-        socket.emit('prejoin', code);
+        socket.emit('join', code, username);
     }
 </script>
 
 <div class="background">
     <div class="body" in:fly={{ y: 25, duration: 250 }}>
-        <h1>Join a Game</h1>
-        <input name="code" id="code-input" type="number" placeholder="Game ID" bind:value={code}>
+        <h1>Enter your username</h1>
+        <input name="code" id="code-input" type="text" placeholder="Username" autocomplete="off" bind:value={username}>
         <button id="code-submit" on:click={submitGame}>Go!</button>
     </div>
+    {#if invalid}
+        <h3 style="color: darkred; width: 100%; text-align: center">Choose a unique user name</h3>
+    {/if}
 </div>
 
 <style>
