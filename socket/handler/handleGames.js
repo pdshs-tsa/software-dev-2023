@@ -20,8 +20,6 @@ const createGame = async function (setuuid) {
 
     const setdata = await database.getSet(setuuid);
 
-    console.log(setdata);
-
     games[code] = {
         set: setdata,
         code: code,
@@ -62,15 +60,18 @@ const destroyGame = function (code) {
 
 const clientDisconnect = function () {
     const socket = this;
-    let code;
-    for (const roomid of socket.rooms){
-        if (roomid in games) {
-            code = roomid;
-            break;
+    const rooms = Array.from(socket.rooms);
+    const code = rooms.find((element) => element in games)
+    //not joined a game
+    if (code === null) return;
+
+    try {
+        if (games[code].hostsocket === socket.id) {
+            destroyGame(code);
+            return;
         }
-    }
-    if (games[code].hostsocket === socket.id) {
-        destroyGame();
+    } catch (err){
+        console.log('Attempted to destroy a game that already was gone.');
         return;
     }
 
