@@ -5,8 +5,14 @@
     export let gamestatus = false;
     export let code = '';
 
+    let invalid = false;
+
     socket.on('ack:prejoin', (data) => {
         gamestatus = data;
+        invalid = !gamestatus;
+        if (invalid){
+            code = '';
+        }
     });
 
     function submitGame() {
@@ -17,8 +23,9 @@
 <div class="background">
     <div class="body" in:fly={{ y: 25, duration: 250 }}>
         <h1>Join a Game</h1>
-        <input name="code" id="code-input" type="number" placeholder="Game ID" bind:value={code}>
+        <input name="code" id="code-input" type="text" inputmode="number" placeholder="Game ID" bind:value={code}>
         <button id="code-submit" on:click={submitGame}>Go!</button>
+        {#if invalid}<h3 style="color: darkred; width: 100%; text-align: center">Enter a valid code</h3>{/if}
     </div>
 </div>
 

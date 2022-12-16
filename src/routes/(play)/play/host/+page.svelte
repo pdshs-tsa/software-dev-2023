@@ -81,7 +81,6 @@
         flex-wrap: wrap;
         width: 80%;
         justify-content: center;
-        box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
     }
 
     .player {

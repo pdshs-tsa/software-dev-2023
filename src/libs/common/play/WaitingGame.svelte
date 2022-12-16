@@ -59,7 +59,7 @@
         display: flex;
         height: 100vh;
         background: linear-gradient(140deg, rgba(175,212,233,1) 0%, rgba(120,154,173,1) 51%, rgba(53,82,98,1) 100%);
-        padding: 10px;
+        padding: 25px;
     }
 
     .set-overview {
@@ -67,6 +67,7 @@
         flex-direction: column;
         flex: 2;
         max-height: 100%;
+        margin: 10px;
         overflow: auto;
         overflow-x: clip;
         background: rgba(255, 255, 255, 0.75);
