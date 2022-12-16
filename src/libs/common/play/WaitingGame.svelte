@@ -25,7 +25,7 @@
     })
 
     socket.on('end', () => {
-        goto('/');
+        goto('/play');
     });
 </script>
 

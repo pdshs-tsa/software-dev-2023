@@ -3,8 +3,11 @@
     import {page} from "$app/stores";
     import {fly} from 'svelte/transition';
     import {flip} from 'svelte/animate';
+    import {onMount} from "svelte";
 
     let players = [];
+
+    let started = false;
 
     const set = $page.data.set;
     const host = $page.data.user;
@@ -13,7 +16,11 @@
     $: slowcode = code;
 
     socket.on('player-join', (username) => {
-        players.push(username);
+        players.push({
+            username: username,
+            correct: 0,
+            total: 0
+        });
         players = players;
     });
 
@@ -26,7 +33,26 @@
         code = resp;
     });
 
-    socket.emit('host', set.uuid);
+    socket.once('game-start', () => {
+        started = true;
+    });
+
+    socket.on('player-answer', (username, correct, total) => {
+        const playerdata = players.find((element) => element.username === username);
+        const index = players.indexOf(playerdata);
+
+        playerdata.correct = correct;
+        playerdata.total = total;
+
+        players[index] = playerdata;
+        players = players.sort((a, b) => {
+            return a.correct - b.correct;
+        }).reverse();
+    });
+
+    onMount(() => {
+        socket.emit('host', set.uuid);
+    });
 
     function kickPlayer(username) {
         socket.emit('kick', code, username);
@@ -37,19 +63,32 @@
     <div class="box title">
         <h1 style="margin: auto;">Code: {code}</h1>
         {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/host')[0]} to join</h6>{/if}
+        {#if !started}<button on:click={() => socket.emit('game-start', code)}>Start game</button>{/if}
     </div>
 
-    <div class="body">
-        {#each players as p (p)}
-            <div class="box player"
-                 on:click={() => kickPlayer(p)}
-                 on:keypress={() => kickPlayer(p)}
-                 animate:flip={{ duration: 300 }}
-                 transition:fly={{ y: 30, duration: 300 }}>
-                <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p}</h3>
-            </div>
-        {/each}
-    </div>
+    {#if !started}
+        <div class="body">
+            {#each players as p (p)}
+                <div class="box player"
+                     on:click={() => kickPlayer(p.username)}
+                     on:keypress={() => kickPlayer(p.username)}
+                     animate:flip={{ duration: 300 }}
+                     transition:fly|local={{ y: 30, duration: 300 }}>
+                    <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.username}</h3>
+                </div>
+            {/each}
+        </div>
+    {:else}
+        <div class="body score-body">
+            {#each players as p (p)}
+                <div class="scorecard player"
+                     animate:flip={{ duration: 300 }}>
+                    <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.username}</h3>
+                    <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.correct} / {p.total}</h3>
+                </div>
+            {/each}
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -89,5 +128,20 @@
 
     .player:hover {
         cursor: pointer;
+    }
+
+    .scorecard {
+        border: 1px solid lightgrey;
+        box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 16px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .score-body {
+        display: flex;
+        flex-direction: column;
     }
 </style>

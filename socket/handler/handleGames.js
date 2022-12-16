@@ -1,4 +1,5 @@
 import database from "../../src/libs/server/database.js";
+import {socket} from "../../src/libs/common/socket/socket.js";
 
 let io;
 const games = {};
@@ -24,7 +25,8 @@ const createGame = async function (setuuid) {
         set: setdata,
         code: code,
         hostsocket: socket.id,
-        players: []
+        players: [],
+        answers: []
     }
 
     socket.emit('ack:host', code);
@@ -63,8 +65,8 @@ const registerPlayer = function (code, username) {
 
     //emit join events
     socket.emit('ack:join', games[code]);
-    socket.to(code).emit('player-join', username);
-    socket.join(code);
+    io.to(games[code].code).emit('player-join', username);
+    socket.join(games[code].code);
 };
 
 const destroyGame = function (code) {
@@ -109,11 +111,35 @@ const kickPlayer = function (code, username) {
     }
 }
 
+const playerAnswer = function (code, correct, total) {
+    const socket = this;
+    let username = games[code].players.find((element) => element.id === socket.id).username
+    if (!(socket.id in games[code].answers)) {
+        games[code].answers[socket.id] = {
+            id: socket.id,
+            username: username,
+            correct: 0,
+            total: 0
+        };
+    }
+
+    games[code].answers[socket.id].correct = correct;
+    games[code].answers[socket.id].total = total;
+
+    io.to(games[code].code).emit('player-answer', username, correct, total);
+}
+
+const gameStart = function (code) {
+    io.to(code).emit('game-start');
+}
+
 export {
     init,
     registerPlayer,
     attemptGameJoin,
     createGame,
     clientDisconnect,
-    kickPlayer
+    kickPlayer,
+    playerAnswer,
+    gameStart
 }

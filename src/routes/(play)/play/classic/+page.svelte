@@ -2,9 +2,10 @@
     import {page} from "$app/stores";
     import {goto} from "$app/navigation";
     import {fly} from 'svelte/transition';
+    import {socket} from "../../../../libs/common/socket/socket.js";
 
-    const user = $page.data.user;
     const set = $page.data.set;
+    const isLive = $page.data.live;
     let setIndex = 0;
     let numCorrect = 0;
 
@@ -33,13 +34,22 @@
 
     async function next(){
         displayScreen = false;
-        if (chosen === correct) numCorrect++;
+        if (chosen === correct) {
+            numCorrect++;
+        }
+        if (isLive){
+            socket.emit('player-answer', $page.data.code, numCorrect, setIndex + 1);
+        }
         if (setIndex + 1 >= set.data.length) {
             await goto(`/set/${set.uuid}`);
             return;
         }
         setIndex++;
     }
+
+    socket.on('end', async () => {
+       await goto('/play');
+    });
 </script>
 
 <div class="body">

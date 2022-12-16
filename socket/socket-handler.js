@@ -32,6 +32,8 @@ export default function injectSocketIO(server) {
         socket.on('join', gameHandler.registerPlayer); //attempt to join game
         socket.on('disconnecting', gameHandler.clientDisconnect); //client disconnect, either player or host
         socket.on('kick', gameHandler.kickPlayer); //host kick player
+        socket.on('player-answer', gameHandler.playerAnswer); //on player answer
+        socket.on('game-start', gameHandler.gameStart); //on game start
     }
 
     io.on('connection', (socket) => {

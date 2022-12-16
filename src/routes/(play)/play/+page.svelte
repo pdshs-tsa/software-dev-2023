@@ -2,8 +2,10 @@
     import PrejoinGame from "../../../libs/common/play/PrejoinGame.svelte";
     import JoinGame from "../../../libs/common/play/JoinGame.svelte";
     import WaitingGame from "../../../libs/common/play/WaitingGame.svelte";
+    import {socket} from "../../../libs/common/socket/socket.js";
+    import {goto} from "$app/navigation";
 
-    let gamecode = 0;
+    let gamecode = '';
     let username = '';
     let gameData = 0;
 
@@ -13,6 +15,13 @@
 
     //0: prejoin, 1: join, 2: waiting
     let status = 0;
+
+    socket.on('game-start', () => {
+        console.log(gameData);
+        goto(`/play/classic?code=${gamecode}&set=${gameData.set.uuid}`, {
+            replaceState: true,
+        });
+    });
 </script>
 
 {#if status === 0}
