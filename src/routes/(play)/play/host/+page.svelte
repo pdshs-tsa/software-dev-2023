@@ -81,7 +81,7 @@
     {:else}
         <div class="body score-body">
             {#each players as p (p)}
-                <div class="scorecard player"
+                <div class="scorecard"
                      animate:flip={{ duration: 300 }}>
                     <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.username}</h3>
                     <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.correct} / {p.total}</h3>
@@ -138,6 +138,7 @@
         border-radius: 16px;
         display: flex;
         justify-content: space-between;
+        margin: 10px;
     }
 
     .score-body {

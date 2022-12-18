@@ -1,5 +1,4 @@
 import database from "../../src/libs/server/database.js";
-import {socket} from "../../src/libs/common/socket/socket.js";
 
 let io;
 const games = {};

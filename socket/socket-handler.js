@@ -1,7 +1,7 @@
 // socket-handler.js
 import { Server } from "socket.io";
 import {instrument} from "@socket.io/admin-ui";
-import * as gameHandler from './handler/handleGames';
+import * as gameHandler from './handler/handleGames.js';
 
 export default function injectSocketIO(server) {
     //initalize io socket instance
@@ -16,8 +16,8 @@ export default function injectSocketIO(server) {
     instrument(io, {
         auth: {
             type: "basic",
-            username: "admin",
-            password: "$2a$12$HVuKd/Mz9M32kQriJd2PqeHzKcX2Rbp.X8ZaGfDzBd0Ksjqu7AeHK" //password
+            username: "charlie",
+            password: "$2a$12$21p3fvsS9beCYtDxbvoOmeOS9L1h9R4/lOEbHIgSwLTRaYyJ.epSe" //password
         },
         mode: "development",
     });
