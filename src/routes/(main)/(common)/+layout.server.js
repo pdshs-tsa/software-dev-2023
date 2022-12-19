@@ -1,4 +1,4 @@
-import database from "../../../libs/server/database.js";
+import database from "../../../../database.js";
 
 export async function load({ cookies }) {
     const sessionid = cookies.get('sessionid');

@@ -1,5 +1,5 @@
 import {invalid, redirect} from "@sveltejs/kit";
-import database from "/src/libs/server/database.js"
+import database from "/database.js"
 
 /** @type {import('./$types').Actions} */
 export const actions = {

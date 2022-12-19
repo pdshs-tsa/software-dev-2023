@@ -1,4 +1,4 @@
-import database from "../../../../libs/server/database.js";
+import database from "../../../../../database.js";
 
 /** @type {import('./$types').LayoutServerLoad} */
 export async function load({url }) {

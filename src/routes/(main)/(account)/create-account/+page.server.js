@@ -1,6 +1,6 @@
 import {invalid, redirect} from "@sveltejs/kit";
 import * as argon2 from "argon2";
-import database from "/src/libs/server/database.js";
+import database from "/database.js";
 import {v4 as uuidv4} from 'uuid';
 
 /** @type {import('./$types').Actions} */

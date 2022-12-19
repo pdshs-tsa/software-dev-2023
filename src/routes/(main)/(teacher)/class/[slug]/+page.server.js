@@ -1,4 +1,4 @@
-import database from "../../../../../libs/server/database.js";
+import database from "../../../../../../database.js";
 import {invalid, redirect, error} from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */

@@ -1,4 +1,4 @@
-import database from "../../src/libs/server/database.js";
+import database from "../../database.js";
 
 let io;
 const games = {};
