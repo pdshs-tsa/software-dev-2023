@@ -183,6 +183,17 @@ class Database {
     }
 
     /**
+     * Returns
+     * @param number
+     * @return {Promise<{id: string, value: any}[]>}
+     */
+    async getRandomSets (number) {
+        const arr = await sets.all();
+        const shuffled = arr.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, (number > shuffled.length) ? shuffled.length : number);
+    }
+
+    /**
      * Get the user's home from username
      * @param {string} username the username
      * @returns {Promise<unknown>} null if the home isn't found

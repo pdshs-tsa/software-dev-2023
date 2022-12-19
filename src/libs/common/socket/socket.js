@@ -1,6 +1,9 @@
 import io from "socket.io-client";
+import {hostname} from "../stores.js";
 
-const socket1 = io('http://localhost:5173', {
+let socket1;
+
+socket1 = io(hostname, {
     transports: ['websocket'],
     upgrade: false
 });

@@ -4,6 +4,12 @@
     import WaitingGame from "../../../libs/common/play/WaitingGame.svelte";
     import {socket} from "../../../libs/common/socket/socket.js";
     import {goto} from "$app/navigation";
+    import {onMount} from "svelte";
+    import {hostname} from "../../../libs/common/stores.js";
+
+    onMount(() => {
+        hostname.set(window.location.host);
+    });
 
     let gamecode = '';
     let username = '';

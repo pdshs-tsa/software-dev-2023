@@ -1,5 +1,11 @@
 <script>
     import { name } from "/src/properties.json";
+    import {hostname} from "../../libs/common/stores.js";
+    import {onMount} from "svelte";
+
+    onMount(() => {
+        hostname.set(window.location.host);
+    });
 </script>
 
 <h1>Welcome to {name}</h1>
