@@ -5,6 +5,8 @@
     import {goto} from "$app/navigation";
 
     const type = $page.data.type;
+    const username = $page.data.username;
+
     const set = $page.data.set;
 </script>
 
@@ -15,7 +17,7 @@
 
         <ul>
             <!-- TODO: make this into a link to a user profile thing -->
-            <li>Created by {set.author}</li>
+            <li>By {set.author}</li>
             <li>{new Date(set.timestamp).toDateString()}</li>
         </ul>
 
@@ -23,7 +25,10 @@
             <button on:click={() => goto(`/play/classic?set=${set.uuid}`)}>Practice</button>
         {/if}
         {#if type === "Teacher"}
-            <button on:click={() => goto(`/play/host?set=${set.uuid}`)}>Host</button>
+            <button on:click={() => goto(window.location + '/host')}>Host</button>
+        {/if}
+        {#if set.author === username}
+            <button on:click={() => goto(window.location + '/edit')}>Edit</button>
         {/if}
     </div>
 
@@ -52,7 +57,7 @@
 
     #create-questions {
         display: table-cell;
-        overflow: scroll;
+        overflow: auto;
         position: absolute;
         min-width: 64.5vw;
         height: 90%;

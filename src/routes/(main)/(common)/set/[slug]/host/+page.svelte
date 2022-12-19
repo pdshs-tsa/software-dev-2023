@@ -1,10 +1,10 @@
 <script>
-    import {socket} from '../../../../libs/common/socket/socket'
+    import {socket} from '../../../../../../libs/common/socket/socket.js'
     import {page} from "$app/stores";
     import {fly} from 'svelte/transition';
     import {flip} from 'svelte/animate';
     import {onMount} from "svelte";
-    import {hostname} from "../../../../libs/common/stores.js";
+    import {hostname} from "../../../../../../libs/common/stores.js";
     import {goto} from "$app/navigation";
 
     let players = [];
@@ -53,12 +53,10 @@
     });
 
     onMount(() => {
-        onMount(() => {
-            if (hostname.toString() === ''){
-                hostname.set(window.location.host);
-                goto(window.location);
-            }
-        });
+        if (hostname.toString() === ''){
+            hostname.set(window.location.host);
+            goto(window.location);
+        }
         socket.emit('host', set.uuid);
     });
 
@@ -70,7 +68,7 @@
 <div class="background">
     <div class="box title">
         <h1 style="margin: auto;">Code: {code}</h1>
-        {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/host')[0]} to join</h6>{/if}
+        {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/set')[0] + '/play'} to join</h6>{/if}
         {#if !started}<button on:click={() => socket.emit('game-start', code)}>Start game</button>{/if}
     </div>
 

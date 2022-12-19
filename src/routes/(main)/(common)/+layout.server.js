@@ -5,8 +5,8 @@ export async function load({ cookies }) {
     const user = await database.getUserFromSession(sessionid);
 
     if (user == null) {
-        return {type: 'none'}
+        return {type: 'none', username: ''}
     }
 
-    return {type: user.accounttype};
+    return {type: user.accounttype, username: user.username};
 }

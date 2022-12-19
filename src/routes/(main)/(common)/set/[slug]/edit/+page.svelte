@@ -1,13 +1,14 @@
 <script>
-    import SetComponent from "../../../../libs/common/SetComponent.svelte";
+    import SetComponent from "../../../../../../libs/common/SetComponent.svelte";
     import { slide } from 'svelte/transition';
     import {applyAction, deserialize} from "$app/forms";
     import {goto, invalidateAll} from "$app/navigation";
     import { page } from '$app/stores'
 
-    $: components = [{ prompt: '', answers: ['', '', '', ''], correct: '' }];
-    $: props = [];
-    const user = $page.data.user;
+    const set = $page.data.set;
+
+    $: components = set.data;
+
     let valid = true;
 
     function addComponent() {
@@ -76,6 +77,7 @@
 
         //add components as new key in data
         await formData.append('components', JSON.stringify(components));
+        await formData.append('uuid', set.uuid);
 
         //post to page.server.js
         const response = await fetch(this.action, {
@@ -110,10 +112,10 @@
     <div id="create-overview">
         <h2>Create a Set</h2>
         <form method="POST" on:submit|preventDefault={handleSubmit}>
-            <input type="text" class="textbox" placeholder="Name" name="name">
-            <input type="text" class="textbox" placeholder="Description" name="desc">
+            <input type="text" class="textbox" placeholder="Name" name="name" value="{set.title}">
+            <input type="text" class="textbox" placeholder="Description" name="desc" value="{set.description}">
             <button type="button" on:click={autofillAnswers}>Autofill choices</button>
-            <button type="submit">Create</button>
+            <button type="submit">Update</button>
         </form>
 
         {#if !valid}
@@ -125,7 +127,7 @@
     <div id="create-questions">
         {#each components as part, i}
             <div transition:slide|local>
-                <SetComponent bind:data={part} bind:this={props[i]} on:remove={removeComponent}/>
+                <SetComponent bind:data={part} on:remove={removeComponent}/>
             </div>
         {/each}
         <button on:click={() => addComponent()}>Add</button>

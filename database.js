@@ -141,6 +141,20 @@ class Database {
         return uuid;
     }
 
+    async updateSet(username, uuid, setData) {
+        const data = {
+            uuid: uuid,
+            title: setData.title,
+            description: setData.desc,
+            author: username,
+            timestamp: Date.now(),
+            data: setData.data
+        }
+
+        await sets.set(uuid, data);
+        return uuid;
+    }
+
     /**
      * Gets the set with the specified uuid
      * @param {string} uuid the uuid of the set
