@@ -12,6 +12,10 @@ export async function load({ cookies }) {
         }
     }
 
+    newsets = newsets.sort((a, b) => {
+        return b.timestamp - a.timestamp;
+    });
+
     return {
         sets: newsets
     }
