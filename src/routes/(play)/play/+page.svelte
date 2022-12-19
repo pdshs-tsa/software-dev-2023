@@ -8,7 +8,10 @@
     import {hostname} from "../../../libs/common/stores.js";
 
     onMount(() => {
-        hostname.set(window.location.host);
+        if (hostname.toString() === ''){
+            hostname.set(window.location.host);
+            goto('/play');
+        }
     });
 
     let gamecode = '';

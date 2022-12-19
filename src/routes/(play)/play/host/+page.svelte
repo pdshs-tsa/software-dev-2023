@@ -4,6 +4,8 @@
     import {fly} from 'svelte/transition';
     import {flip} from 'svelte/animate';
     import {onMount} from "svelte";
+    import {hostname} from "../../../../libs/common/stores.js";
+    import {goto} from "$app/navigation";
 
     let players = [];
 
@@ -51,6 +53,12 @@
     });
 
     onMount(() => {
+        onMount(() => {
+            if (hostname.toString() === ''){
+                hostname.set(window.location.host);
+                goto(window.location);
+            }
+        });
         socket.emit('host', set.uuid);
     });
 
