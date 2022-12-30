@@ -49,8 +49,8 @@
 
 <style>
     .body{
-        height: 30vh;
-        width: 20vw;
+        height: 300px;
+        width: 300px;
         padding: 10px;
         border: 1px solid lightgrey;
         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;

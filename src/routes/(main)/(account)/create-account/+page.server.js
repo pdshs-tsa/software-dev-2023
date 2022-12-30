@@ -38,7 +38,9 @@ export const actions = {
             username: username,
             hash: hash,
             accounttype: accounttype,
+            timestamp: Date.now(),
             class: classcode,
+            sets: [],
             uuid: uuidv4()
         };
 

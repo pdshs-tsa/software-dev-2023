@@ -58,7 +58,8 @@
     .body {
         display: flex;
         height: 100vh;
-        background: linear-gradient(140deg, rgba(175,212,233,1) 0%, rgba(120,154,173,1) 51%, rgba(53,82,98,1) 100%);
+        background-image: url("/join-background.png");
+        background-size: cover;
         padding: 25px;
     }
 
@@ -70,7 +71,7 @@
         margin: 10px;
         overflow: auto;
         overflow-x: clip;
-        background: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.95);
         box-shadow: rgba(0, 0, 0, 0.19) 0 10px 20px, rgba(0, 0, 0, 0.23) 0 6px 6px;
     }
 
@@ -83,7 +84,7 @@
     }
 
     .player-card {
-        background: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.95);
         box-shadow: rgba(0, 0, 0, 0.19) 0 10px 20px, rgba(0, 0, 0, 0.23) 0 6px 6px;
     }
 

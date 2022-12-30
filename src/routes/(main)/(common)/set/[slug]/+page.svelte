@@ -16,8 +16,7 @@
         <h5>{set.description}</h5>
 
         <ul>
-            <!-- TODO: make this into a link to a user profile thing -->
-            <li>By {set.author}</li>
+            <li>By <p on:click={() => goto('/user/' + set.author)} on:keypress={() => goto('/user/' + set.author)} id="author-link">{set.author}</p></li>
             <li>{new Date(set.timestamp).toDateString()}</li>
         </ul>
 
@@ -68,4 +67,12 @@
         margin: 0;
     }
 
+    #author-link {
+        display: inline;
+        color: cornflowerblue;
+    }
+
+    #author-link:hover {
+        cursor: pointer;
+    }
 </style>

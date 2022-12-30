@@ -2,10 +2,11 @@
     import {page} from "$app/stores";
     import {goto} from "$app/navigation";
     import {fly} from 'svelte/transition';
-    import {socket} from "../../../../libs/common/socket/socket.js";
+    import {socket} from "../../../../../libs/common/socket/socket.js";
 
     const set = $page.data.set;
     const isLive = $page.data.live;
+    const user = $page.data.user;
     let setIndex = 0;
     let numCorrect = 0;
 
@@ -42,6 +43,7 @@
         }
         if (setIndex + 1 >= set.data.length) {
             await goto(`/set/${set.uuid}`);
+            socket.disconnect();
             return;
         }
         setIndex++;

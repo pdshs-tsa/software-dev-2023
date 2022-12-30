@@ -6,14 +6,12 @@
     const sets = $page.data.sets;
 </script>
 
-<h2>{user.username}'s Sets</h2>
+<h2>Your sets</h2>
 
 <div class="setbox">
-    {#if sets != null}
-        {#each sets as set}
-            <SetOverviewCard data="{set}" />
-        {/each}
-    {/if}
+    {#each sets as set}
+        <SetOverviewCard data="{set}" />
+    {/each}
 </div>
 
 <hr>

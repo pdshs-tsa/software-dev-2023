@@ -7,8 +7,8 @@ export default function injectSocketIO(server) {
     //initalize io socket instance
     const io = new Server(server, {
         cors: {
-            origin: ["https://admin.socket.io"],
-            credentials: true
+            origin: ["https://admin.socket.io/"],
+            credentials: true,
         }
     });
 
@@ -16,8 +16,8 @@ export default function injectSocketIO(server) {
     instrument(io, {
         auth: {
             type: "basic",
-            username: "charlie",
-            password: "$2a$12$21p3fvsS9beCYtDxbvoOmeOS9L1h9R4/lOEbHIgSwLTRaYyJ.epSe" //password
+            username: "admin",
+            password: "$2b$10$heqvAkYMez.Va6Et2uXInOnkCT6/uQj1brkrbyG3LpopDklcq7ZOS"
         },
         mode: "development",
     });
