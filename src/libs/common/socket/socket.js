@@ -3,7 +3,7 @@ import {hostname} from "../stores.js";
 
 let socket1;
 
-socket1 = io(hostname, {
+socket1 = io({
     transports: ['websocket'],
     upgrade: false
 });

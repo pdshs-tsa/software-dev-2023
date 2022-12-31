@@ -7,7 +7,7 @@ export default function injectSocketIO(server) {
     //initalize io socket instance
     const io = new Server(server, {
         cors: {
-            origin: ["https://admin.socket.io/"],
+            origin: ["https://admin.socket.io"],
             credentials: true,
         }
     });
