@@ -41,8 +41,8 @@
         //init app/canvas
         //TODO: make size dynamic somehow
         let app = new PIXI.Application({view,
-            width: window.innerHeight / 2,
-            height: window.innerHeight / 2,
+            width: window.innerHeight * 0.8,
+            height: window.innerHeight * 0.8,
             antialias: true,
             backgroundColor: 0xffffff
         });
@@ -126,11 +126,11 @@
         }
         if (player.y <= 10){
             currentCell.y -= 1;
-            player.y = 735;
+            player.y = app.screen.height - 15;
             updateWalls();
             dispatch('cellchange');
         }
-        if (player.y >= 740){
+        if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
             updateWalls();
@@ -138,11 +138,11 @@
         }
         if (player.x <= 10){
             currentCell.x -= 1;
-            player.x = 735;
+            player.x = app.screen.width - 15;
             updateWalls();
             dispatch('cellchange');
         }
-        if (player.x >=740){
+        if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
             updateWalls();
