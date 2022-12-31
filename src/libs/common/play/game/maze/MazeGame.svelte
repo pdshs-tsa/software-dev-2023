@@ -1,11 +1,12 @@
 <script>
     import * as PIXI from 'pixi.js';
-    import * as Intersects from 'intersects';
     import {onMount} from "svelte";
     import Generator from 'maze-generation/src/Generator';
     import Prando from 'prando';
     import keyboard from '../keyboard';
-    import collision from "../collision.js";
+    import {createEventDispatcher} from "svelte";
+
+    const dispatch = createEventDispatcher();
 
     let view;
     let app;
@@ -22,6 +23,8 @@
 
     //game state, normally play
     let state;
+
+    let allowMovement = false;
 
     let currentCell = {
         x: 0,
@@ -44,7 +47,7 @@
         });
 
         //load assets
-        const playertexture = await PIXI.Assets.load('/maze/player.png');
+        const playertexture = await PIXI.Assets.load('/maze/Cube.png');
         const hinttexture = await PIXI.Assets.load('/maze/hint.png');
 
         //draw player
@@ -108,16 +111,46 @@
     }
 
     function play(delta) {
-        player.x += player.vx;
-        player.y += player.vy;
+        if (allowMovement){
+            player.x += player.vx;
+            player.y += player.vy;
+        }
         for (const child of background.children){
             //this is scuffed
-            if (Intersects.boxLine(player.x - player.width / 5, player.y - player.height / 5, player.width, player.height, child.x, child.y, child.width, child.height)){
-                console.log('collision')
-                player.x -= player.vx * 4;
-                player.y -= player.vy * 4;
+            const boundingBox = child.getBounds();
+            if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y, boundingBox.y + boundingBox.height)){
+                player.x -= player.vx;
+                player.y -= player.vy;
             }
         }
+        if (player.y <= 10){
+            currentCell.y -= 1;
+            player.y = 735;
+            updateWalls();
+            dispatch('cellchange');
+        }
+        if (player.y >= 740){
+            currentCell.y += 1;
+            player.y = 15;
+            updateWalls();
+            dispatch('cellchange');
+        }
+        if (player.x <= 10){
+            currentCell.x -= 1;
+            player.x = 735;
+            updateWalls();
+            dispatch('cellchange');
+        }
+        if (player.x >=740){
+            currentCell.x += 1;
+            player.x = 15;
+            updateWalls();
+            dispatch('cellchange');
+        }
+    }
+
+    function playerTouchingSpecificWall(leftBound, rightBound, upBound, downBound) {
+        return (leftBound - player.width <= player.x && player.x - player.width/2 <= rightBound) && (upBound - player.height <= player.y && player.y <= downBound);
     }
 
     function generateMaze(width, height) {
@@ -142,15 +175,14 @@
                 maze.removeWall(x, y, 'right');
             }
         }
-
+        console.log(maze.toString())
         return maze;
     }
-
 
     //TODO: make walls sprite and rotate them according to their position (helps with collision detection)
     function updateWalls(){
         background.removeChildren();
-        const cell = maze.cells[currentCell.x][currentCell.y];
+        const cell = maze.cells[currentCell.y][currentCell.x];
 
         for (const prop in cell.walls) {
             if (cell.walls[prop]){
@@ -181,7 +213,7 @@
                 if (prop === 'down') {
                     let wall = new PIXI.Graphics()
                         .beginFill(0x000000)
-                        .drawRect(0, app.screen.height, app.screen.width, wallThickness)
+                        .drawRect(0, app.screen.height - wallThickness, app.screen.width, wallThickness)
                         .endFill();
                     background.addChild(wall);
                 }
@@ -189,6 +221,11 @@
         }
 
         hideHint();
+
+        //check if win
+        if (player.y === maze.cells.length - 1 && player.x === maze.cells[0].length - 1){
+            dispatch('end');
+        }
     }
 
     function hideHint() {
@@ -197,8 +234,8 @@
 
     export function showHint() {
         const solution = maze.generateSolution({
-            row: currentCell.x,
-            column: currentCell.y
+            row: currentCell.y,
+            column: currentCell.x
         }, {
             row: maze.cells.length - 1,
             column: maze.cells[0].length - 1
@@ -222,6 +259,10 @@
             hint.angle = 90;
         }
         hint.visible = true;
+    }
+
+    export function setMovement(boolean){
+        allowMovement = boolean;
     }
 </script>
 

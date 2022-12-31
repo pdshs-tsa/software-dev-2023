@@ -1,6 +1,8 @@
 <script>
     import {page} from "$app/stores";
     import MazeGame from "../../../../../libs/common/play/game/maze/MazeGame.svelte";
+    import {goto} from "$app/navigation";
+    import {socket} from "../../../../../libs/common/socket/socket.js";
 
     //init set data
     const set = $page.data.set;
@@ -26,11 +28,43 @@
     $: correct = current.correct;
 
     let gameComponent;
+    let answerStatus;
 
     function handleClick(selected) {
+        if (answerStatus) return;
         if (selected === correct){
             gameComponent.showHint();
+            prompt = "Correct!";
+            numCorrect++;
+        } else {
+            prompt = "Incorrect :(";
         }
+        gameComponent.setMovement(true);
+        answerStatus = true;
+    }
+
+    function onCellChange(){
+        //dont freeze player immediately
+        setTimeout(() => {
+            if (setIndex + 1 >= set.data.length) {
+                questions = set.data
+                    .map(value => ({ value, sort: Math.random() }))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(({ value }) => value);
+
+                setIndex = 0;
+            } else {
+                setIndex++;
+            }
+            gameComponent.setMovement(false);
+            answerStatus = false;
+        }, 500);
+    }
+
+    function gameEnd() {
+        setTimeout(() => {
+            goto(`/set/${set.uuid}`);
+        }, 500)
     }
 </script>
 
@@ -43,5 +77,5 @@
             {/each}
         </div>
     </div>
-    <MazeGame bind:this={gameComponent}/>
+    <MazeGame bind:this={gameComponent} on:cellchange={onCellChange}/>
 </div>
