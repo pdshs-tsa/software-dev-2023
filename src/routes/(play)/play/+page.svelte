@@ -31,6 +31,10 @@
             replaceState: true,
         });
     });
+
+    socket.on('end', () => {
+        goto('/play');
+    });
 </script>
 
 {#if status === 0}

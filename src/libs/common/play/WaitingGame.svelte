@@ -1,5 +1,4 @@
 <script>
-    import {goto} from "$app/navigation";
     import {socket} from "../socket/socket.js";
     import SetComponentUneditable from "../SetComponentUneditable.svelte";
     import {slide} from "svelte/transition";
@@ -22,10 +21,6 @@
     socket.on('player-leave', (username) => {
         players.splice(players.indexOf(username), 1);
         players = players;
-    })
-
-    socket.on('end', () => {
-        goto('/play');
     });
 </script>
 
