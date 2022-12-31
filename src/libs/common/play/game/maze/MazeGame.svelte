@@ -64,32 +64,35 @@
             right = keyboard("ArrowRight"),
             up = keyboard("ArrowUp"),
             down = keyboard("ArrowDown");
+
+        const moveDistance = app.screen.width / 25
+
         left.press = () => {
-            player.vx -= 1.5;
+            player.vx -= moveDistance;
         }
         left.release = () => {
-            player.vx += 1.5;
+            player.vx += moveDistance;
         }
 
         right.press = () => {
-            player.vx += 1.5;
+            player.vx += moveDistance;
         }
         right.release = () => {
-            player.vx -= 1.5;
+            player.vx -= moveDistance;
         }
 
         up.press = () => {
-            player.vy -= 1.5;
+            player.vy -= moveDistance;
         }
         up.release = () => {
-            player.vy += 1.5;
+            player.vy += moveDistance;
         }
 
         down.press = () => {
-            player.vy += 1.5;
+            player.vy += moveDistance;
         }
         down.release = () => {
-            player.vy -= 1.5;
+            player.vy -= moveDistance;
         }
 
         app.stage.addChild(player);
