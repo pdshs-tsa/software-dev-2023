@@ -1,6 +1,6 @@
 <script>
     import * as PIXI from 'pixi.js';
-    import {onMount} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import Generator from 'maze-generation/src/Generator';
     import Prando from 'prando';
     import keyboard from '../keyboard';
@@ -12,10 +12,11 @@
     let app;
     let maze;
 
+    //how thick the walls are, 20 is a good number
     const wallThickness = 20;
 
     //containers
-    let background;
+    let wallContainer;
 
     //sprites
     let hint;
@@ -24,6 +25,7 @@
     //game state, normally play
     let state;
 
+    //if the sprite can move
     let allowMovement = false;
 
     let currentCell = {
@@ -31,11 +33,22 @@
         y: 0
     }
 
+    //score data
+    let score;
+    let scoreInt = 0;
+
     onMount(async () => {
         maze = generateMaze(15, 15);
         app = await init();
         updateWalls();
     });
+
+    onDestroy(() => {
+        if (!(app instanceof PIXI.Application)) return;
+        app.destroy(false, {
+            children: true,
+        })
+    })
 
     async function init() {
         //init app/canvas
@@ -104,10 +117,22 @@
         hint.y = 100;
         app.stage.addChild(hint);
 
-        //init containers
-        background = new PIXI.Container();
+        //draw score
+        score = new PIXI.Text(`Score: ${scoreInt}`, {
+            fontFamily: 'Courier New',
+            fontSize: 20,
+            fill: 0x000000,
+            align: "left"
+        });
 
-        app.stage.addChild(background);
+        score.x = wallThickness * 2;
+        score.y = app.screen.height - wallThickness * 2.5;
+        app.stage.addChild(score);
+
+        //init containers
+        wallContainer = new PIXI.Container();
+
+        app.stage.addChild(wallContainer);
         state = play;
         app.ticker.add((delta) => state(delta));
         return app;
@@ -118,7 +143,7 @@
             player.x += player.vx;
             player.y += player.vy;
         }
-        for (const child of background.children){
+        for (const child of wallContainer.children){
             //this is scuffed
             const boundingBox = child.getBounds();
             if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y, boundingBox.y + boundingBox.height)){
@@ -178,12 +203,11 @@
                 maze.removeWall(x, y, 'right');
             }
         }
-        console.log(maze.toString())
         return maze;
     }
 
     function updateWalls(){
-        background.removeChildren();
+        wallContainer.removeChildren();
         const cell = maze.cells[currentCell.y][currentCell.x];
 
         for (const prop in cell.walls) {
@@ -193,7 +217,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, 0, wallThickness, app.screen.height)
                         .endFill();
-                    background.addChild(wall);
+                    wallContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'right') {
@@ -201,7 +225,7 @@
                         .beginFill(0x000000)
                         .drawRect(app.screen.width - wallThickness, 0, wallThickness, app.screen.height)
                         .endFill();
-                    background.addChild(wall);
+                    wallContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'up') {
@@ -209,7 +233,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, 0, app.screen.width, wallThickness)
                         .endFill();
-                    background.addChild(wall);
+                    wallContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'down') {
@@ -217,7 +241,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, app.screen.height - wallThickness, app.screen.width, wallThickness)
                         .endFill();
-                    background.addChild(wall);
+                    wallContainer.addChild(wall);
                 }
             }
         }
@@ -243,11 +267,8 @@
             column: maze.cells[0].length - 1
         });
 
-        console.log(solution.toString())
 
         const best = solution.toJSON()[1];
-        console.log(best);
-        console.log(currentCell);
         if (best.column > currentCell.x){
             hint.angle = 0;
         }
@@ -265,6 +286,11 @@
 
     export function setMovement(boolean){
         allowMovement = boolean;
+    }
+
+    export function updateScore(int) {
+        scoreInt += int;
+        score.text = `Score: ${scoreInt}`;
     }
 </script>
 

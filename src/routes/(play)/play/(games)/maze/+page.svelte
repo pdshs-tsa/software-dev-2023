@@ -30,11 +30,14 @@
     let gameComponent;
     let answerStatus;
 
+    let qStartMs = Date.now();
+
     function handleClick(selected) {
         if (answerStatus) return;
         if (selected === correct){
             gameComponent.showHint();
             prompt = "Correct!";
+            gameComponent.updateScore(1000);
             numCorrect++;
         } else {
             prompt = "Incorrect :(";
