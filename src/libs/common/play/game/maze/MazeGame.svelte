@@ -39,7 +39,6 @@
 
     async function init() {
         //init app/canvas
-        //TODO: make size dynamic somehow
         let app = new PIXI.Application({view,
             width: window.innerHeight * 0.8,
             height: window.innerHeight * 0.8,
@@ -65,7 +64,7 @@
             up = keyboard("ArrowUp"),
             down = keyboard("ArrowDown");
 
-        const moveDistance = app.screen.width / 25
+        const moveDistance = app.screen.width / 500
 
         left.press = () => {
             player.vx -= moveDistance;
@@ -183,7 +182,6 @@
         return maze;
     }
 
-    //TODO: make walls sprite and rotate them according to their position (helps with collision detection)
     function updateWalls(){
         background.removeChildren();
         const cell = maze.cells[currentCell.y][currentCell.x];
