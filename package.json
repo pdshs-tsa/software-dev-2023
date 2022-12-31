@@ -31,6 +31,7 @@
 		"better-sqlite3": "^7.6.2",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
+		"intersects": "^2.7.2",
 		"maze-generation": "^3.1.1",
 		"pixi.js": "^7.0.5",
 		"prando": "^6.0.1",
