@@ -39,9 +39,10 @@
 
     async function init() {
         //init app/canvas
+        //TODO: make size dynamic somehow
         let app = new PIXI.Application({view,
-            width: 700,
-            height: 700,
+            width: window.innerHeight / 2,
+            height: window.innerHeight / 2,
             antialias: true,
             backgroundColor: 0xffffff
         });
