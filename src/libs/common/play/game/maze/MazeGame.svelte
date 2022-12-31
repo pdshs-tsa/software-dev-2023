@@ -16,7 +16,8 @@
     const wallThickness = 20;
 
     //containers
-    let wallContainer;
+    let wallsContainer;
+    let backgroundContainer;
 
     //sprites
     let hint;
@@ -37,10 +38,17 @@
     let score;
     let scoreInt = 0;
 
+    //background store
+    let backgroundMap = new Map();
+    let backgrounds = [];
+    
+    //random number
+    const prando = new Prando();
+
     onMount(async () => {
         maze = generateMaze(15, 15);
         app = await init();
-        updateWalls();
+        updateBackground();
     });
 
     onDestroy(() => {
@@ -53,8 +61,8 @@
     async function init() {
         //init app/canvas
         let app = new PIXI.Application({view,
-            width: window.innerHeight * 0.8,
-            height: window.innerHeight * 0.8,
+            width: window.innerHeight * 0.9,
+            height: window.innerHeight * 0.9,
             antialias: true,
             backgroundColor: 0xffffff
         });
@@ -62,6 +70,39 @@
         //load assets
         const playertexture = await PIXI.Assets.load('/maze/Cube.png');
         const hinttexture = await PIXI.Assets.load('/maze/hint.png');
+
+        //load backgrounds
+        for (const i of ['/maze/background-1.png', "/maze/background-2.png", "/maze/background-3.png", "/maze/background-4.png"]){
+            backgrounds.push(await PIXI.Assets.load(i));
+        }
+
+        //init containers
+        wallsContainer = new PIXI.Container();
+        backgroundContainer = new PIXI.Container();
+
+        app.stage.addChild(backgroundContainer);
+        app.stage.addChild(wallsContainer);
+
+        //draw score
+        score = new PIXI.Text(`Score: ${scoreInt}`, {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 20,
+            fill: 0x000000,
+            align: "left"
+        });
+
+        score.x = wallThickness * 2;
+        score.y = app.screen.height - wallThickness * 2.5;
+        app.stage.addChild(score);
+
+        //draw hint
+        hint = PIXI.Sprite.from(hinttexture);
+        hint.anchor.set(0.5);
+        hint.visible = false;
+        hint.x = app.screen.width / 2;
+        hint.y = 100;
+        app.stage.addChild(hint);
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
@@ -109,30 +150,6 @@
 
         app.stage.addChild(player);
 
-        //draw hint
-        hint = PIXI.Sprite.from(hinttexture);
-        hint.anchor.set(0.5);
-        hint.visible = false;
-        hint.x = app.screen.width / 2;
-        hint.y = 100;
-        app.stage.addChild(hint);
-
-        //draw score
-        score = new PIXI.Text(`Score: ${scoreInt}`, {
-            fontFamily: 'Courier New',
-            fontSize: 20,
-            fill: 0x000000,
-            align: "left"
-        });
-
-        score.x = wallThickness * 2;
-        score.y = app.screen.height - wallThickness * 2.5;
-        app.stage.addChild(score);
-
-        //init containers
-        wallContainer = new PIXI.Container();
-
-        app.stage.addChild(wallContainer);
         state = play;
         app.ticker.add((delta) => state(delta));
         return app;
@@ -143,7 +160,7 @@
             player.x += player.vx;
             player.y += player.vy;
         }
-        for (const child of wallContainer.children){
+        for (const child of wallsContainer.children){
             //this is scuffed
             const boundingBox = child.getBounds();
             if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y, boundingBox.y + boundingBox.height)){
@@ -154,25 +171,25 @@
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
-            updateWalls();
+            updateBackground();
             dispatch('cellchange');
         }
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
-            updateWalls();
+            updateBackground();
             dispatch('cellchange');
         }
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
-            updateWalls();
+            updateBackground();
             dispatch('cellchange');
         }
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
-            updateWalls();
+            updateBackground();
             dispatch('cellchange');
         }
     }
@@ -183,7 +200,6 @@
 
     function generateMaze(width, height) {
         const generator = new Generator(width, height);
-        const prando = new Prando();
         const maze = generator.generateMaze('DEPTHFIRST', prando);
 
         for (let i = 0; i < prando.nextInt(width, width * 2); i++){
@@ -206,10 +222,29 @@
         return maze;
     }
 
-    function updateWalls(){
-        wallContainer.removeChildren();
+    function updateBackground(){
+        wallsContainer.removeChildren();
+        backgroundContainer.removeChildren();
         const cell = maze.cells[currentCell.y][currentCell.x];
+        
+        //load background (preventing undefined)
+        if (!backgroundMap.has(`${currentCell.x}:${currentCell.y}`)){
+            let texture = undefined;
+            do {
+                texture = backgrounds.at(prando.nextInt(0, backgrounds.length))
+            } while (texture === undefined)
+            backgroundMap.set(`${currentCell.x}:${currentCell.y}`, texture);
+        }
+        
+        const bkgSprite = PIXI.Sprite.from(backgroundMap.get(`${currentCell.x}:${currentCell.y}`));
+        bkgSprite.x = 0;
+        bkgSprite.y = 0;
+        bkgSprite.width = app.screen.width;
+        bkgSprite.height = app.screen.height;
 
+        backgroundContainer.addChild(bkgSprite);
+
+        //draw walls
         for (const prop in cell.walls) {
             if (cell.walls[prop]){
                 if (prop === 'left') {
@@ -217,7 +252,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, 0, wallThickness, app.screen.height)
                         .endFill();
-                    wallContainer.addChild(wall);
+                    wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'right') {
@@ -225,7 +260,7 @@
                         .beginFill(0x000000)
                         .drawRect(app.screen.width - wallThickness, 0, wallThickness, app.screen.height)
                         .endFill();
-                    wallContainer.addChild(wall);
+                    wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'up') {
@@ -233,7 +268,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, 0, app.screen.width, wallThickness)
                         .endFill();
-                    wallContainer.addChild(wall);
+                    wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'down') {
@@ -241,7 +276,7 @@
                         .beginFill(0x000000)
                         .drawRect(0, app.screen.height - wallThickness, app.screen.width, wallThickness)
                         .endFill();
-                    wallContainer.addChild(wall);
+                    wallsContainer.addChild(wall);
                 }
             }
         }
@@ -266,7 +301,6 @@
             row: maze.cells.length - 1,
             column: maze.cells[0].length - 1
         });
-
 
         const best = solution.toJSON()[1];
         if (best.column > currentCell.x){

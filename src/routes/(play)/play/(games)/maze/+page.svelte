@@ -71,9 +71,9 @@
     }
 </script>
 
-<div style="display: flex; justify-content: space-evenly; align-items: center; background: lightskyblue; height: 100vh; ">
+<div class="body">
     <div style="display: flex; align-items: center; flex-direction: column">
-        <h1>{prompt}</h1>
+        <h1 style="color: white">{prompt}</h1>
         <div style="display: flex; flex-wrap: wrap">
             {#each answers as answer}
                 <button on:click={() => handleClick(answer)}>{answer}</button>
@@ -82,3 +82,14 @@
     </div>
     <MazeGame bind:this={gameComponent} on:cellchange={onCellChange} on:end={gameEnd}/>
 </div>
+
+<style>
+    .body {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        background-image: url("/join-background.png");
+        background-size: cover;
+        height: 100vh;
+    }
+</style>
