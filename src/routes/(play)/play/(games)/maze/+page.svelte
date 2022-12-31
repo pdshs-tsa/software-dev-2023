@@ -77,5 +77,5 @@
             {/each}
         </div>
     </div>
-    <MazeGame bind:this={gameComponent} on:cellchange={onCellChange}/>
+    <MazeGame bind:this={gameComponent} on:cellchange={onCellChange} on:end={gameEnd}/>
 </div>

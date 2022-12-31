@@ -40,8 +40,8 @@
     async function init() {
         //init app/canvas
         let app = new PIXI.Application({view,
-            width: 750,
-            height: 750,
+            width: 700,
+            height: 700,
             antialias: true,
             backgroundColor: 0xffffff
         });
