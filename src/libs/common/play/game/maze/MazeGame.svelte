@@ -18,6 +18,7 @@
     //containers
     let wallsContainer;
     let backgroundContainer;
+    let questionContainer;
 
     //sprites
     let hint;
@@ -45,6 +46,13 @@
     //random number
     const prando = new Prando();
 
+    export let setData = {};
+    let setIndex = 0;
+    let questions = setData.data
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+
     onMount(async () => {
         maze = generateMaze(15, 15);
         app = await init();
@@ -64,12 +72,21 @@
             width: window.innerHeight * 0.9,
             height: window.innerHeight * 0.9,
             antialias: true,
-            backgroundColor: 0xffffff
+            backgroundColor: 0xffffff,
+            resolution: window.devicePixelRatio,
         });
+
+        PIXI.utils.clearTextureCache();
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+        PIXI.settings.ROUND_PIXELS = false;
+        PIXI.settings.RESOLUTION = 1;
+        window.devicePixelRatio = 1;
 
         //load assets
         const playertexture = await PIXI.Assets.load('/maze/Cube.png');
         const hinttexture = await PIXI.Assets.load('/maze/hint.png');
+        await PIXI.Assets.load('/maze/fullscreen.png');
+        await PIXI.Assets.load('/maze/question-box.png');
 
         //load backgrounds
         for (const i of ['/maze/background-1.png', "/maze/background-2.png", "/maze/background-3.png", "/maze/background-4.png"]){
@@ -79,6 +96,7 @@
         //init containers
         wallsContainer = new PIXI.Container();
         backgroundContainer = new PIXI.Container();
+        questionContainer = new PIXI.Container();
 
         app.stage.addChild(backgroundContainer);
         app.stage.addChild(wallsContainer);
@@ -150,6 +168,24 @@
 
         app.stage.addChild(player);
 
+        //draw questions
+
+        app.stage.addChild(questionContainer);
+        nextQuestion(app);
+
+        //draw fullscreen
+        let fullscreen = PIXI.Sprite.from('/maze/fullscreen.png');
+        fullscreen.anchor.set(0.5);
+        fullscreen.x = app.screen.width - wallThickness * 3;
+        fullscreen.y = wallThickness * 3;
+        fullscreen.interactive = true;
+        fullscreen.buttonMode = true;
+        fullscreen.on('pointerdown', () => {
+            dispatch('fullscreen');
+        });
+        app.stage.addChild(fullscreen);
+
+        //add updates
         state = play;
         app.ticker.add((delta) => state(delta));
         return app;
@@ -172,25 +208,37 @@
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
             updateBackground();
-            dispatch('cellchange');
+            setTimeout(() => {
+                nextQuestion(app);
+                allowMovement = false;
+            }, 500);
         }
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
             updateBackground();
-            dispatch('cellchange');
+            setTimeout(() => {
+                nextQuestion(app);
+                allowMovement = false;
+            }, 500);
         }
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
             updateBackground();
-            dispatch('cellchange');
+            setTimeout(() => {
+                nextQuestion(app);
+                allowMovement = false;
+            }, 500);
         }
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
             updateBackground();
-            dispatch('cellchange');
+            setTimeout(() => {
+                nextQuestion(app);
+                allowMovement = false;
+            }, 500);
         }
     }
 
@@ -289,6 +337,100 @@
         }
     }
 
+    function nextQuestion(app) {
+        questionContainer.removeChildren();
+        questionContainer.visible = false;
+        let box = PIXI.Sprite.from('/maze/question-box.png');
+        box.anchor.set(0.5);
+        box.x = app.screen.width / 2;
+        box.y = app.screen.height / 2;
+        box.height = app.screen.height * 0.45;
+        box.width = app.screen.width * 0.9;
+
+        const questionText = new PIXI.Text(questions[setIndex].prompt, {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 18,
+            fill: 0x000000,
+            align: "left",
+        });
+
+        questionText.anchor.set(0.5);
+        questionText.x = box.x;
+        questionText.y = box.y - box.height / 4;
+
+        questionContainer.addChild(box);
+        questionContainer.addChild(questionText);
+
+        let answers = questions[setIndex].answers
+            .map(value => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
+
+        let positions = [{x: box.x - box.width / 4, y: box.y},
+            {x: box.x + box.width / 4, y: box.y},
+            {x: box.x - box.width / 4, y: box.y + box.height / 4},
+            {x: box.x + box.width / 4, y: box.y + box.height / 4    }]
+
+        for (let i = 0; i < answers.length; i++){
+            const answer = new PIXI.Text(`${answers[i]}`, {
+                fontFamily: 'Courier New',
+                fontWeight: "bolder",
+                fontSize: 18,
+                fill: 0x000000,
+                align: "left"
+            });
+
+            answer.anchor.set(0.5);
+            answer.x = positions[i].x;
+            answer.y = positions[i].y;
+            answer.buttonMode = true;
+            answer.interactive = true;
+            answer.on('pointerdown', () => {handleAnswer(answers[i])});
+            questionContainer.addChild(answer);
+        }
+        questionContainer.visible = true;
+    }
+
+    function handleAnswer(selected) {
+        let correct = questions[setIndex].correct;
+        let toast;
+        if (correct === selected){
+            toast = new PIXI.Text('Correct!', {
+                fontFamily: 'Courier New',
+                fontWeight: "bolder",
+                fontSize: 20,
+                fill: 0x000000,
+                align: "left"
+            });
+            score += 1000;
+            showHint();
+        } else {
+            toast = new PIXI.Text(`Incorrect, the answer is "${correct}"`, {
+                fontFamily: 'Courier New',
+                fontWeight: "bolder",
+                fontSize: 20,
+                fill: 0x000000,
+                align: "left"
+            });
+        }
+        toast.anchor.set(0.5);
+        toast.x = hint.x;
+        toast.y = hint.y * 2;
+        setTimeout(() => {
+            toast.destroy();
+        }, 2500);
+
+        setIndex++;
+        if (setIndex > questions.length){
+            setData = 0;
+        }
+
+        allowMovement = true;
+        questionContainer.visible = false;
+        app.stage.addChild(toast);
+    }
+
     function hideHint() {
         hint.visible = false;
     }
@@ -322,10 +464,6 @@
         allowMovement = boolean;
     }
 
-    export function updateScore(int) {
-        scoreInt += int;
-        score.text = `Score: ${scoreInt}`;
-    }
 </script>
 
 <div style="display: flex; justify-content: center; align-items: center; height: 100%">
