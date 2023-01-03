@@ -411,6 +411,11 @@
             });
             score += 1000;
             showHint();
+            allowMovement = true;
+
+            setTimeout(() => {
+                toast.destroy();
+            }, 2500);
         } else {
             toast = new PIXI.Text(`Incorrect, the answer is "${correct}"`, {
                 fontFamily: 'Courier New',
@@ -419,20 +424,25 @@
                 fill: 0x000000,
                 align: "left"
             });
+
+            setTimeout(() => {
+                toast.destroy();
+                allowMovement = true;
+            }, 2500);
         }
         toast.anchor.set(0.5);
         toast.x = hint.x;
         toast.y = hint.y * 2;
-        setTimeout(() => {
-            toast.destroy();
-        }, 2500);
 
         setIndex++;
-        if (setIndex > questions.length){
-            setData = 0;
+        if (setIndex >= questions.length){
+            questions = setData.data
+                .map(value => ({ value, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ value }) => value);
+            setIndex = 0;
         }
 
-        allowMovement = true;
         questionContainer.visible = false;
         app.stage.addChild(toast);
     }
