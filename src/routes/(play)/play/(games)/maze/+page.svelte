@@ -1,9 +1,9 @@
 <script>
     import {page} from "$app/stores";
-    import MazeGame from "../../../../../libs/common/play/game/maze/MazeGame.svelte";
     import {goto} from "$app/navigation";
-    import {socket} from "../../../../../libs/common/socket/socket.js";
     import screenfull from "screenfull";
+    import SingleplayerMazeGame from "../../../../../libs/common/play/game/maze/SingleplayerMazeGame.svelte";
+    import MultiplayerMazeGame from "../../../../../libs/common/play/game/maze/MultiplayerMazeGame.svelte";
 
     //init set data
     const set = $page.data.set;
@@ -26,7 +26,11 @@
 
 <div class="body">
     <div id="mazegame">
-        <MazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}"/>
+        {#if isLive}
+            <MultiplayerMazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}"/>
+        {:else}
+            <SingleplayerMazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}"/>
+        {/if}
     </div>
 </div>
 

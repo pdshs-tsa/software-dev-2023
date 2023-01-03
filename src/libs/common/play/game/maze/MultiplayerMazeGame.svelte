@@ -5,6 +5,7 @@
     import Prando from 'prando';
     import keyboard from '../keyboard';
     import {createEventDispatcher} from "svelte";
+    import {socket} from "../../../socket/socket.js";
 
     const dispatch = createEventDispatcher();
 
@@ -64,7 +65,7 @@
         app.destroy(false, {
             children: true,
         })
-    })
+    });
 
     async function init() {
         //init app/canvas
