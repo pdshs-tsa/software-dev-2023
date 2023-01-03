@@ -87,6 +87,7 @@
         const hinttexture = await PIXI.Assets.load('/maze/hint.png');
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
+        await PIXI.Assets.load('/maze/wall.png');
 
         //load backgrounds
         for (const i of ['/maze/background-1.png', "/maze/background-2.png", "/maze/background-3.png", "/maze/background-4.png"]){
@@ -296,34 +297,39 @@
         for (const prop in cell.walls) {
             if (cell.walls[prop]){
                 if (prop === 'left') {
-                    let wall = new PIXI.Graphics()
-                        .beginFill(0x000000)
-                        .drawRect(0, 0, wallThickness, app.screen.height)
-                        .endFill();
+                    let wall = PIXI.Sprite.from('/maze/wall.png');
+                    wall.width = wallThickness;
+                    wall.height = app.screen.height;
                     wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'right') {
-                    let wall = new PIXI.Graphics()
-                        .beginFill(0x000000)
-                        .drawRect(app.screen.width - wallThickness, 0, wallThickness, app.screen.height)
-                        .endFill();
+                    let wall = PIXI.Sprite.from('/maze/wall.png');
+                    wall.width = wallThickness;
+                    wall.height = app.screen.height;
+                    wall.x = app.screen.width - wallThickness;
                     wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'up') {
-                    let wall = new PIXI.Graphics()
-                        .beginFill(0x000000)
-                        .drawRect(0, 0, app.screen.width, wallThickness)
-                        .endFill();
+                    let wall = PIXI.Sprite.from('/maze/wall.png');
+                    wall.anchor.set(0.5);
+                    wall.width = wallThickness;
+                    wall.height = app.screen.height;
+                    wall.angle = 90;
+                    wall.x = app.screen.width / 2;
+                    wall.y = wallThickness / 2;
                     wallsContainer.addChild(wall);
                     continue;
                 }
                 if (prop === 'down') {
-                    let wall = new PIXI.Graphics()
-                        .beginFill(0x000000)
-                        .drawRect(0, app.screen.height - wallThickness, app.screen.width, wallThickness)
-                        .endFill();
+                    let wall = PIXI.Sprite.from('/maze/wall.png');
+                    wall.anchor.set(0.5);
+                    wall.width = wallThickness;
+                    wall.height = app.screen.height;
+                    wall.angle = 90;
+                    wall.x = app.screen.width / 2;
+                    wall.y = app.screen.height - wallThickness / 2;
                     wallsContainer.addChild(wall);
                 }
             }
