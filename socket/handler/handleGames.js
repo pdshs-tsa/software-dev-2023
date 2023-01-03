@@ -3,6 +3,11 @@ import database from "../../database.js";
 let io;
 const games = {};
 
+/*
+    IMPORTANT THINGS TO REMEMBER:
+    player-answer will always be emitted to the room regardless of game mode. This consists of the username and the score
+ */
+
 const init = function (inout) {
     io = inout;
 }
@@ -111,7 +116,7 @@ const kickPlayer = function (code, username) {
     }
 }
 
-const playerAnswer = function (code, correct, time) {
+const classicPlayerAnswer = function (code, correct, time) {
     const socket = this;
     let username = games[code].players.find((element) => element.id === socket.id).username
     if (!(socket.id in games[code].answers)) {
@@ -147,6 +152,6 @@ export {
     createGame,
     clientDisconnect,
     kickPlayer,
-    playerAnswer,
+    classicPlayerAnswer,
     gameStart
 }

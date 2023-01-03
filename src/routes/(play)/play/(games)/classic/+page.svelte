@@ -42,7 +42,7 @@
             numCorrect++;
         }
         if (isLive){
-            socket.emit('player-answer', $page.data.code, chosen === correct, time);
+            socket.emit('classic:player-answer', $page.data.code, chosen === correct, time);
         }
         if (setIndex + 1 >= set.data.length) {
             await goto(`/play`);
