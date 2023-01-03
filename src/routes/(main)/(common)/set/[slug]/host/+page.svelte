@@ -20,8 +20,7 @@
     socket.on('player-join', (username) => {
         players.push({
             username: username,
-            correct: 0,
-            total: 0
+            score: 0
         });
         players = players;
     });
@@ -39,16 +38,13 @@
         started = true;
     });
 
-    socket.on('player-answer', (username, correct, total) => {
+    socket.on('player-answer', (username, score) => {
         const playerdata = players.find((element) => element.username === username);
         const index = players.indexOf(playerdata);
-
-        playerdata.correct = correct;
-        playerdata.total = total;
-
+        playerdata.score = score;
         players[index] = playerdata;
         players = players.sort((a, b) => {
-            return a.correct - b.correct;
+            return a.score - b.score;
         }).reverse();
     });
 
@@ -90,7 +86,7 @@
                 <div class="scorecard"
                      animate:flip={{ duration: 300 }}>
                     <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.username}</h3>
-                    <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.correct} / {p.total}</h3>
+                    <h3 style="margin: auto; padding: 10px 20px 10px 20px;">{p.score}</h3>
                 </div>
             {/each}
         </div>

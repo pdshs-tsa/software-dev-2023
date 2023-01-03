@@ -10,6 +10,8 @@
     let setIndex = 0;
     let numCorrect = 0;
 
+    let time = Date.now();
+
     let questions = set.data
         .map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
@@ -31,6 +33,7 @@
      async function submitButton(content) {
         chosen = content;
         displayScreen = true;
+        time = Date.now() - time;
     }
 
     async function next(){
@@ -39,13 +42,14 @@
             numCorrect++;
         }
         if (isLive){
-            socket.emit('player-answer', $page.data.code, numCorrect, setIndex + 1);
+            socket.emit('player-answer', $page.data.code, chosen === correct, time);
         }
         if (setIndex + 1 >= set.data.length) {
-            await goto(`/set/${set.uuid}`);
+            await goto(`/play`);
             socket.disconnect();
             return;
         }
+        time = Date.now();
         setIndex++;
     }
 

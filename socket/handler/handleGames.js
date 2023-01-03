@@ -90,6 +90,7 @@ const clientDisconnect = function () {
             return;
         }
         const player = games[code].players.find((element) => element.id === socket.id);
+        if (player.score !== 0) return;
         io.to(code).emit('player-leave', player.username);
         games[code].players.splice(games[code].players.indexOf(player), 1);
     } catch (err){
@@ -110,26 +111,33 @@ const kickPlayer = function (code, username) {
     }
 }
 
-const playerAnswer = function (code, correct, total) {
+const playerAnswer = function (code, correct, time) {
     const socket = this;
     let username = games[code].players.find((element) => element.id === socket.id).username
     if (!(socket.id in games[code].answers)) {
         games[code].answers[socket.id] = {
             id: socket.id,
             username: username,
-            correct: 0,
-            total: 0
+            score: 0
         };
     }
 
-    games[code].answers[socket.id].correct = correct;
-    games[code].answers[socket.id].total = total;
+    if (correct){
+        let points;
+        if (time < 650){
+            points = 1000;
+        } else {
+            points = Math.ceil(1000 * (Math.pow(1.02, -1 * time / 1000)));
+        }
 
-    io.to(games[code].code).emit('player-answer', username, correct, total);
+        games[code].answers[socket.id].score += points;
+    }
+
+    io.to(games[code].code).emit('player-answer', username, games[code].answers[socket.id].score);
 }
 
-const gameStart = function (code) {
-    io.to(code).emit('game-start');
+const gameStart = function (code, mode) {
+    io.to(code).emit('game-start', mode);
 }
 
 export {
