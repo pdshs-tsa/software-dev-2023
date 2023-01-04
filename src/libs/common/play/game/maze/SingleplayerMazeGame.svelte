@@ -83,7 +83,7 @@
         window.devicePixelRatio = 1;
 
         //load assets
-        const playertexture = await PIXI.Assets.load('/maze/Cube.png');
+        const playertexture = await PIXI.Assets.load('/maze/player.png');
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
         await PIXI.Assets.load('/maze/wall.png');
@@ -116,7 +116,7 @@
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
-        player.anchor.set(0.5);
+        player.anchor.set(0.5, 0);
 
         player.x = app.screen.width / 2;
         player.y = app.screen.height / 2;

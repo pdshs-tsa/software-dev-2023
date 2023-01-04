@@ -76,8 +76,8 @@
         entityContainer.removeChildren();
         const visible = players.filter((p) => p.cx === currentCell.x && p.cy === currentCell.y && p.id !== socket.id);
         visible.forEach((p) => {
-            let sprite = PIXI.Sprite.from('/maze/Cube.png');
-            sprite.anchor.set(0.5);
+            let sprite = PIXI.Sprite.from('/maze/player.png');
+            sprite.anchor.set(0.5, 0);
 
             sprite.x = p.x;
             sprite.y = p.y;
@@ -92,7 +92,7 @@
 
             nametag.anchor.set(0.5);
             nametag.x = p.x;
-            nametag.y = p.y - sprite.height;
+            nametag.y = p.y - sprite.height * 0.5;
 
             entityContainer.addChild(sprite);
             entityContainer.addChild(nametag);
@@ -149,7 +149,7 @@
         window.devicePixelRatio = 1;
 
         //load assets
-        const playertexture = await PIXI.Assets.load('/maze/Cube.png');
+        const playertexture = await PIXI.Assets.load('/maze/player.png');
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
         await PIXI.Assets.load('/maze/wall.png');
@@ -187,7 +187,7 @@
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
-        player.anchor.set(0.5);
+        player.anchor.set(0.5, 0);
 
         player.x = app.screen.width / 2;
         player.y = app.screen.height / 2;
