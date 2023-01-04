@@ -75,4 +75,8 @@
     #author-link:hover {
         cursor: pointer;
     }
+
+    :global(body) {
+        overflow: auto;
+    }
 </style>

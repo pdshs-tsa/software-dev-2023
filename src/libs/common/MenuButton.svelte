@@ -1,4 +1,4 @@
-<nav on:click={goto(endpoint)} on:keypress={goto(endpoint)}>{text}</nav>
+<button on:click={goto(endpoint)} on:keypress={goto(endpoint)}>{text}</button>
 
 <script>
     import { goto } from "$app/navigation"
@@ -7,7 +7,7 @@
 </script>
 
 <style>
-    nav {
+    button {
         border: 1px;
         color: white;
         horiz-align: center;
@@ -24,8 +24,7 @@
         transition: background-color 0.25s;
     }
 
-    nav:hover{
+    button:hover{
         background-color: #8ab0c6;
-        cursor: pointer;
     }
 </style>
