@@ -32,8 +32,14 @@ export default function injectSocketIO(server) {
         socket.on('join', gameHandler.registerPlayer); //attempt to join game
         socket.on('disconnecting', gameHandler.clientDisconnect); //client disconnect, either player or host
         socket.on('kick', gameHandler.kickPlayer); //host kick player
-        socket.on('classic:player-answer', gameHandler.classicPlayerAnswer); //on player answer
         socket.on('game-start', gameHandler.gameStart); //on game start
+
+        socket.on('classic:answer', gameHandler.classicPlayerAnswer); //on player answer
+
+        socket.on('maze:cell', gameHandler.fetchCellData); //fetch cell data for maze
+        socket.on('maze:tick', gameHandler.mazeTick); //update player position
+        socket.on('maze:move', gameHandler.mazeMove); //on cell move
+        socket.on('maze:answer', gameHandler.mazePlayerAnswer)
     }
 
     io.on('connection', (socket) => {

@@ -6,12 +6,14 @@
     export let username = '';
     export let gameData = {};
     let invalid = false;
+    let message;
 
     socket.on('ack:join', (data) => {
-        if (data !== 0) {
+        if (typeof data !== 'string') {
             gameData = data;
         } else {
             invalid = true;
+            message = data;
         }
     });
 
@@ -27,7 +29,7 @@
         <button id="code-submit" on:click={submitGame}>Go!</button>
     </div>
     {#if invalid}
-        <h3 style="color: darkred; width: 100%; text-align: center">Choose a unique user name</h3>
+        <h3 style="color: darkred; width: 100%; text-align: center">{message}</h3>
     {/if}
 </div>
 

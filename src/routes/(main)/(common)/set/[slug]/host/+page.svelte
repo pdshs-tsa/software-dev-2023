@@ -38,7 +38,7 @@
         started = true;
     });
 
-    socket.on('player-answer', (username, score) => {
+    socket.on('answer', (username, score) => {
         const playerdata = players.find((element) => element.username === username);
         const index = players.indexOf(playerdata);
         playerdata.score = score;
@@ -65,7 +65,7 @@
     <div class="box title">
         <h1 style="margin: auto;">Code: {code}</h1>
         {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/set')[0] + '/play'} to join</h6>{/if}
-        {#if !started}<button on:click={() => socket.emit('game-start', code)}>Start game</button>{/if}
+        {#if !started}<button on:click={() => socket.emit('game-start', code, 'maze')}>Start game</button>{/if}
     </div>
 
     {#if !started}

@@ -3,6 +3,7 @@
     import SetComponentUneditable from "../SetComponentUneditable.svelte";
     import {slide} from "svelte/transition";
     import {flip} from "svelte/animate";
+    import {goto} from "$app/navigation";
 
     export let gameData = {};
     export let code = 0;
@@ -21,6 +22,10 @@
     socket.on('player-leave', (username) => {
         players.splice(players.indexOf(username), 1);
         players = players;
+    });
+
+    socket.on('end', () => {
+        goto('/play');
     });
 </script>
 

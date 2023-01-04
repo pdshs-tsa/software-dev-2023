@@ -1,6 +1,4 @@
 import io from "socket.io-client";
-import {hostname} from "../stores.js";
-
 let socket1;
 
 socket1 = io({

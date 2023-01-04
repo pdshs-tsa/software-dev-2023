@@ -1,17 +1,15 @@
 <script>
     import * as PIXI from 'pixi.js';
     import {onDestroy, onMount} from "svelte";
-    import Generator from 'maze-generation/src/Generator';
-    import Prando from 'prando';
     import keyboard from '../keyboard';
     import {createEventDispatcher} from "svelte";
     import {socket} from "../../../socket/socket.js";
+    import {goto} from "$app/navigation";
 
     const dispatch = createEventDispatcher();
 
     let view;
     let app;
-    let maze;
 
     //how thick the walls are, 20 is a good number
     const wallThickness = 20;
@@ -20,6 +18,8 @@
     let wallsContainer;
     let backgroundContainer;
     let questionContainer;
+    let entityContainer;
+    let scoreContainer;
 
     //sprites
     let hint;
@@ -37,15 +37,7 @@
     }
 
     //score data
-    let score;
-    let scoreInt = 0;
-
-    //background store
-    let backgroundMap = new Map();
-    let backgrounds = [];
-    
-    //random number
-    const prando = new Prando();
+    let time;
 
     export let setData = {};
     let setIndex = 0;
@@ -54,24 +46,85 @@
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
 
+    //data for the current cell
+    let celldata;
+
+    //game code
+    export let gameCode = 0;
+
+    //socket events
+    socket.on('maze:cell', (data) => {
+       celldata = data;
+       updateBackground();
+    });
+
+    socket.on('maze:tick', (players) => {
+        if (entityContainer === undefined) return;
+        players = JSON.parse(players);
+        entityContainer.removeChildren();
+        const visible = players.filter((p) => p.cx === currentCell.x && p.cy === currentCell.y && p.id !== socket.id);
+        visible.forEach((p) => {
+            let sprite = PIXI.Sprite.from('/maze/Cube.png');
+            sprite.anchor.set(0.5);
+
+            sprite.x = p.x;
+            sprite.y = p.y;
+
+            let nametag = new PIXI.Text(`${p.username}`, {
+                fontFamily: 'Courier New',
+                fontWeight: "bolder",
+                fontSize: 15,
+                fill: 0x000000,
+                align: "left"
+            });
+
+            nametag.anchor.set(0.5);
+            nametag.x = p.x;
+            nametag.y = p.y - sprite.height;
+
+            entityContainer.addChild(sprite);
+            entityContainer.addChild(nametag);
+        });
+    });
+
+    socket.on('ack:maze:answer', (s) => {
+        scoreContainer.removeChildren();
+        let score = new PIXI.Text(`Score: ${s}`, {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 20,
+            fill: 0x000000,
+            align: "left"
+        });
+
+        score.x = wallThickness * 2;
+        score.y = app.screen.height - wallThickness * 2.5;
+        scoreContainer.addChild(score);
+    })
+
+    //TODO: make checks for invalid game urls, this is an ok workaround
+    socket.on('disconnect', () => {
+        goto('/play');
+    });
+
     onMount(async () => {
-        maze = generateMaze(15, 15);
         app = await init();
-        updateBackground();
+        socket.emit('maze:cell', gameCode, currentCell);
     });
 
     onDestroy(() => {
         if (!(app instanceof PIXI.Application)) return;
         app.destroy(false, {
             children: true,
-        })
+        });
+        socket.disconnect();
     });
 
     async function init() {
         //init app/canvas
         let app = new PIXI.Application({view,
-            width: window.innerHeight * 0.9,
-            height: window.innerHeight * 0.9,
+            width: 700,
+            height: 700,
             antialias: true,
             backgroundColor: 0xffffff,
             resolution: window.devicePixelRatio,
@@ -92,19 +145,21 @@
 
         //load backgrounds
         for (const i of ['/maze/background-1.png', "/maze/background-2.png", "/maze/background-3.png", "/maze/background-4.png"]){
-            backgrounds.push(await PIXI.Assets.load(i));
+            await PIXI.Assets.load(i);
         }
 
         //init containers
         wallsContainer = new PIXI.Container();
         backgroundContainer = new PIXI.Container();
         questionContainer = new PIXI.Container();
+        entityContainer = new PIXI.Container();
+        scoreContainer = new PIXI.Container();
 
         app.stage.addChild(backgroundContainer);
         app.stage.addChild(wallsContainer);
 
         //draw score
-        score = new PIXI.Text(`Score: ${scoreInt}`, {
+        let score = new PIXI.Text(`Score: 0`, {
             fontFamily: 'Courier New',
             fontWeight: "bolder",
             fontSize: 20,
@@ -114,7 +169,8 @@
 
         score.x = wallThickness * 2;
         score.y = app.screen.height - wallThickness * 2.5;
-        app.stage.addChild(score);
+        scoreContainer.addChild(score);
+        app.stage.addChild(scoreContainer);
 
         //draw hint
         hint = PIXI.Sprite.from(hinttexture);
@@ -170,8 +226,10 @@
 
         app.stage.addChild(player);
 
-        //draw questions
+        //draw entities
+        app.stage.addChild(entityContainer);
 
+        //draw questions
         app.stage.addChild(questionContainer);
         nextQuestion(app);
 
@@ -209,7 +267,7 @@
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
-            updateBackground();
+            socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
                 allowMovement = false;
@@ -218,7 +276,7 @@
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
-            updateBackground();
+            socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
                 allowMovement = false;
@@ -227,7 +285,7 @@
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
-            updateBackground();
+            socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
                 allowMovement = false;
@@ -236,57 +294,25 @@
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
-            updateBackground();
+            socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
                 allowMovement = false;
             }, 500);
         }
+
+        socket.emit('maze:tick', gameCode, player.x, player.y);
     }
 
     function playerTouchingSpecificWall(leftBound, rightBound, upBound, downBound) {
         return (leftBound - player.width <= player.x && player.x - player.width/2 <= rightBound) && (upBound - player.height <= player.y && player.y <= downBound);
     }
 
-    function generateMaze(width, height) {
-        const generator = new Generator(width, height);
-        const maze = generator.generateMaze('DEPTHFIRST', prando);
-
-        for (let i = 0; i < prando.nextInt(width, width * 2); i++){
-            //prevent it from going over width/height
-            const x = prando.nextInt(1, width - 2);
-            const y = prando.nextInt(1, height - 2);
-            if (maze.getWallStatus(x, y, 'up')){
-                maze.removeWall(x, y, 'up');
-            }
-            if (maze.getWallStatus(x, y, 'down')){
-                maze.removeWall(x, y, 'down');
-            }
-            if (maze.getWallStatus(x, y, 'left')){
-                maze.removeWall(x, y, 'left');
-            }
-            if (maze.getWallStatus(x, y, 'right')){
-                maze.removeWall(x, y, 'right');
-            }
-        }
-        return maze;
-    }
-
     function updateBackground(){
         wallsContainer.removeChildren();
         backgroundContainer.removeChildren();
-        const cell = maze.cells[currentCell.y][currentCell.x];
         
-        //load background (preventing undefined)
-        if (!backgroundMap.has(`${currentCell.x}:${currentCell.y}`)){
-            let texture = undefined;
-            do {
-                texture = backgrounds.at(prando.nextInt(0, backgrounds.length))
-            } while (texture === undefined)
-            backgroundMap.set(`${currentCell.x}:${currentCell.y}`, texture);
-        }
-        
-        const bkgSprite = PIXI.Sprite.from(backgroundMap.get(`${currentCell.x}:${currentCell.y}`));
+        const bkgSprite = PIXI.Sprite.from(`/maze/background-${celldata.background}.png`);
         bkgSprite.x = 0;
         bkgSprite.y = 0;
         bkgSprite.width = app.screen.width;
@@ -295,8 +321,8 @@
         backgroundContainer.addChild(bkgSprite);
 
         //draw walls
-        for (const prop in cell.walls) {
-            if (cell.walls[prop]){
+        for (const prop in celldata.walls) {
+            if (celldata.walls[prop]){
                 if (prop === 'left') {
                     let wall = PIXI.Sprite.from('/maze/wall.png');
                     wall.width = wallThickness;
@@ -337,11 +363,6 @@
         }
 
         hideHint();
-
-        //check if win
-        if (player.y === maze.cells.length - 1 && player.x === maze.cells[0].length - 1){
-            dispatch('end');
-        }
     }
 
     function nextQuestion(app) {
@@ -397,9 +418,12 @@
             questionContainer.addChild(answer);
         }
         questionContainer.visible = true;
+        time = Date.now();
     }
 
+    //TODO: track cells that the player has been in so that they can't farm points
     function handleAnswer(selected) {
+        time = Date.now() - time;
         let correct = questions[setIndex].correct;
         let toast;
         if (correct === selected){
@@ -410,8 +434,7 @@
                 fill: 0x000000,
                 align: "left"
             });
-            score += 1000;
-            showHint();
+            socket.emit('maze:answer', gameCode, true, time);
             allowMovement = true;
 
             setTimeout(() => {
@@ -452,7 +475,8 @@
         hint.visible = false;
     }
 
-    export function showHint() {
+    //TODO: make this work by generating solutions ahead of time (might scrap this tbh)
+    /*function showHint() {
         const solution = maze.generateSolution({
             row: currentCell.y,
             column: currentCell.x
@@ -475,11 +499,7 @@
             hint.angle = 90;
         }
         hint.visible = true;
-    }
-
-    export function setMovement(boolean){
-        allowMovement = boolean;
-    }
+    }*/
 
 </script>
 

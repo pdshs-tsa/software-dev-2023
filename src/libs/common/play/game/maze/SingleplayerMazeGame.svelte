@@ -409,7 +409,7 @@
                 fill: 0x000000,
                 align: "left"
             });
-            score += 1000;
+            scoreInt += 1000;
             showHint();
             allowMovement = true;
 
@@ -451,7 +451,7 @@
         hint.visible = false;
     }
 
-    export function showHint() {
+    function showHint() {
         const solution = maze.generateSolution({
             row: currentCell.y,
             column: currentCell.x
@@ -475,11 +475,6 @@
         }
         hint.visible = true;
     }
-
-    export function setMovement(boolean){
-        allowMovement = boolean;
-    }
-
 </script>
 
 <div style="display: flex; justify-content: center; align-items: center; height: 100%">

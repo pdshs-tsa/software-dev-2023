@@ -27,7 +27,7 @@
 <div class="body">
     <div id="mazegame">
         {#if isLive}
-            <MultiplayerMazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}"/>
+            <MultiplayerMazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}" gameCode="{$page.data.code}"/>
         {:else}
             <SingleplayerMazeGame on:end={gameEnd} on:fullscreen={fullscreen} setData="{set}"/>
         {/if}

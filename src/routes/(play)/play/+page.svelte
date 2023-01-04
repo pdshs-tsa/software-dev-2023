@@ -25,11 +25,19 @@
     //0: prejoin, 1: join, 2: waiting
     let status = 0;
 
-    socket.on('game-start', () => {
-        console.log(gameData);
-        goto(`/play/classic?code=${gamecode}&set=${gameData.set.uuid}`, {
-            replaceState: true,
-        });
+    socket.on('game-start', (mode) => {
+        if (mode === 'classic'){
+            goto(`/play/classic?code=${gamecode}&set=${gameData.set.uuid}`, {
+                replaceState: true,
+            });
+            return;
+        }
+        if (mode === 'maze') {
+            goto(`/play/maze?code=${gamecode}&set=${gameData.set.uuid}`, {
+                replaceState: true,
+            });
+            return;
+        }
     });
 
     socket.on('end', () => {
