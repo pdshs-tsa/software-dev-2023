@@ -9,12 +9,17 @@
     $: props = [];
     const user = $page.data.user;
     let valid = true;
+    let loading = false;
 
-    function addComponent() {
-        let data = {
-            prompt: '',
-            answers: ['', '', '', ''],
-            correct: ''
+    let loadingData = '';
+
+    function addComponent(data = undefined) {
+        if (data === undefined){
+            data = {
+                prompt: '',
+                answers: ['', '', '', ''],
+                correct: ''
+            }
         }
 
         components.push(data);
@@ -104,6 +109,19 @@
         }
         return num;
     }
+
+    function parseData() {
+        const sets = loadingData.split(';;');
+        for (const term of sets) {
+            addComponent({prompt: term.split('[]')[0], answers: [term.split('[]')[1], '', '', ''], correct: term.split('[]')[1]})
+        }
+        if (components.at(0).prompt === '' && components.at(0).correct === ''){
+            components.splice(0, 1);
+            components = components;
+        }
+        loading = false;
+        loadingData = '';
+    }
 </script>
 
 <div class="body">
@@ -112,6 +130,7 @@
         <form method="POST" on:submit|preventDefault={handleSubmit}>
             <input type="text" class="textbox" placeholder="Name" name="name">
             <input type="text" class="textbox" placeholder="Description" name="desc">
+            <button type="button" on:click={() => loading = true}>Load data</button>
             <button type="button" on:click={autofillAnswers}>Autofill choices</button>
             <button type="submit">Create</button>
         </form>
@@ -132,9 +151,19 @@
     </div>
 </div>
 
+{#if loading}
+    <div class="centered" style="max-width: 50%; max-height: 50%; overflow: auto; background: white; padding: 10px">
+        <div style="display: flex; justify-content: space-between">
+            <h2>Load from Quizlet</h2>
+            <button style="width: fit-content; height: fit-content" on:click={() => loading = false}>Close</button>
+        </div>
+        <p>Go to a Quizlet set, press the three dots, and press "export". Then, change the "between term and definition" to "[]" and "between rows" to ";;". This only works with sets you own!</p>
+        <textarea bind:value={loadingData}></textarea>
+        <button on:click={parseData}>Load</button>
+    </div>
+{/if}
 <style>
     .body{
-        width: 90%;
         display: table;
 
         overflow: clip;
@@ -149,8 +178,8 @@
         display: table-cell;
         overflow: auto;
         position: absolute;
-        min-width: 64.5vw;
-        height: 90%;
+        min-width: 60vw;
+        height: 80%;
         border-left: 20px solid transparent;
     }
 
@@ -167,5 +196,12 @@
         margin: 10px;
         color: red;
         font-size: medium;
+    }
+
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
