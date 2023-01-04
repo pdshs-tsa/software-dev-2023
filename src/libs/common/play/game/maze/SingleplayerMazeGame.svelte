@@ -84,7 +84,6 @@
 
         //load assets
         const playertexture = await PIXI.Assets.load('/maze/Cube.png');
-        const hinttexture = await PIXI.Assets.load('/maze/hint.png');
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
         await PIXI.Assets.load('/maze/wall.png');
@@ -114,14 +113,6 @@
         score.x = wallThickness * 2;
         score.y = app.screen.height - wallThickness * 2.5;
         app.stage.addChild(score);
-
-        //draw hint
-        hint = PIXI.Sprite.from(hinttexture);
-        hint.anchor.set(0.5);
-        hint.visible = false;
-        hint.x = app.screen.width / 2;
-        hint.y = 100;
-        app.stage.addChild(hint);
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
