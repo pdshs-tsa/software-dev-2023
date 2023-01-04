@@ -268,41 +268,33 @@
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
-            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
-                allowMovement = false;
             }, 500);
         }
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
-            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
-                allowMovement = false;
             }, 500);
         }
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
-            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
-                allowMovement = false;
             }, 500);
         }
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
-            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
-                allowMovement = false;
             }, 500);
         }
 
@@ -371,9 +363,14 @@
     }
 
     function nextQuestion(app) {
-        if (visitedCells.includes(currentCell)) return;
+        //this is scuffed but objects dont work
+        //prevent farming points
+        if (visitedCells.includes(`${currentCell.x} ${currentCell.y}`)) return;
+        visitedCells.push(`${currentCell.x} ${currentCell.y}`);
+
         questionContainer.removeChildren();
         questionContainer.visible = false;
+        allowMovement = false;
         let box = PIXI.Sprite.from('/maze/question-box.png');
         box.anchor.set(0.5);
         box.x = app.screen.width / 2;

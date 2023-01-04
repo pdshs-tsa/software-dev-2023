@@ -42,5 +42,6 @@
         background-image: url("/join-background.png");
         background-size: cover;
         height: 100vh;
+        overflow: auto;
     }
 </style>
