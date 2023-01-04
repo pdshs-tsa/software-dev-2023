@@ -117,6 +117,7 @@ const clientDisconnect = function () {
 
 const kickPlayer = function (code, username) {
     const socket = this;
+    if (games[code] === undefined) return;
     for (const player of games[code].players) {
         if (player.username === username){
             io.to(player.id).emit('end');
@@ -129,6 +130,7 @@ const kickPlayer = function (code, username) {
 }
 
 const gameStart = async function (code, mode) {
+    if (games[code] === undefined) return;
     games[code].mode = mode;
     io.to(code).emit('game-start', mode);
     if (mode === 'maze') {
@@ -156,6 +158,7 @@ const gameStart = async function (code, mode) {
 
 const classicPlayerAnswer = function (code, correct, time) {
     const socket = this;
+    if (games[code] === undefined) return;
     let username = games[code].players.find((element) => element.id === socket.id).username
     if (!(socket.id in games[code].answers)) {
         games[code].answers[socket.id] = {
@@ -236,6 +239,7 @@ const mazeTick = function(code, x, y){
 
 const mazePlayerAnswer = function (code, correct, time) {
     const socket = this;
+    if (games[code] === undefined) return;
     let username = games[code].players.find((element) => element.id === socket.id).username
     if (!(socket.id in games[code].answers)) {
         games[code].answers[socket.id] = {

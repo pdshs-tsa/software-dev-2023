@@ -12,16 +12,6 @@ export default function injectSocketIO(server) {
         }
     });
 
-    //initialize admin panel
-    instrument(io, {
-        auth: {
-            type: "basic",
-            username: "admin",
-            password: "$2b$10$heqvAkYMez.Va6Et2uXInOnkCT6/uQj1brkrbyG3LpopDklcq7ZOS"
-        },
-        mode: "development",
-    });
-
     //init handlers
     gameHandler.init(io);
 
