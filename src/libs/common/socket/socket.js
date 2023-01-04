@@ -6,6 +6,4 @@ socket1 = io({
     upgrade: false
 });
 
-console.log("loaded");
-
 export const socket = socket1;

@@ -47,7 +47,6 @@ const attemptGameJoin = function (code) {
 
 const registerPlayer = function (code, username) {
     const socket = this;
-    console.log('called');
     //check if code exists
     if (!(code in games)) {
         socket.emit('ack:join', "This game does not exist.");
@@ -108,7 +107,7 @@ const clientDisconnect = function () {
             return;
         }
         const player = games[code].players.find((element) => element.id === socket.id);
-        if (player.score !== 0 && games[code].maze != null) return;
+        if (player.score !== 0) return;
         io.to(code).emit('player-leave', player.username);
         games[code].players.splice(games[code].players.indexOf(player), 1);
     } catch (err){

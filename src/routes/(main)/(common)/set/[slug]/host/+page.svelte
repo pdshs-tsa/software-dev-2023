@@ -10,6 +10,7 @@
     let players = [];
 
     let started = false;
+    let showSelection = false;
 
     const set = $page.data.set;
     const host = $page.data.user;
@@ -35,6 +36,7 @@
     });
 
     socket.once('game-start', () => {
+        showSelection = false;
         started = true;
     });
 
@@ -65,7 +67,7 @@
     <div class="box title">
         <h1 style="margin: auto;">Code: {code}</h1>
         {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/set')[0] + '/play'} to join</h6>{/if}
-        {#if !started}<button on:click={() => socket.emit('game-start', code, 'maze')}>Start game</button>{/if}
+        {#if !started}<button on:click={() => showSelection = true}>Start game</button>{/if}
     </div>
 
     {#if !started}
@@ -92,6 +94,15 @@
         </div>
     {/if}
 </div>
+
+{#if showSelection}
+    <div class="centered title box">
+        <h2 style="margin: auto">Select mode</h2>
+        <button on:click={() => socket.emit('game-start', code, 'classic')}>Classic</button>
+        <button on:click={() => socket.emit('game-start', code, 'maze')}>Maze</button>
+    </div>
+{/if}
+
 <style>
     .background {
         background-image: url("/join-background.png");
@@ -146,5 +157,12 @@
     .score-body {
         display: flex;
         flex-direction: column;
+    }
+
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
