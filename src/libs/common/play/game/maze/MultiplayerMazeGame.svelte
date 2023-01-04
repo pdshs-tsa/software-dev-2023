@@ -35,6 +35,7 @@
         x: 0,
         y: 0
     }
+    let visitedCells = [];
 
     //score data
     let time;
@@ -267,6 +268,7 @@
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
+            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
@@ -276,6 +278,7 @@
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
+            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
@@ -285,6 +288,7 @@
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
+            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
@@ -294,6 +298,7 @@
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
+            visitedCells.push(currentCell);
             socket.emit('maze:move', gameCode, currentCell)
             setTimeout(() => {
                 nextQuestion(app);
@@ -366,6 +371,7 @@
     }
 
     function nextQuestion(app) {
+        if (visitedCells.includes(currentCell)) return;
         questionContainer.removeChildren();
         questionContainer.visible = false;
         let box = PIXI.Sprite.from('/maze/question-box.png');
@@ -421,7 +427,6 @@
         time = Date.now();
     }
 
-    //TODO: track cells that the player has been in so that they can't farm points
     function handleAnswer(selected) {
         time = Date.now() - time;
         let correct = questions[setIndex].correct;
@@ -475,7 +480,7 @@
         hint.visible = false;
     }
 
-    //TODO: make this work by generating solutions ahead of time (might scrap this tbh)
+    //TODO: replace this with an 'explored' map
     /*function showHint() {
         const solution = maze.generateSolution({
             row: currentCell.y,
