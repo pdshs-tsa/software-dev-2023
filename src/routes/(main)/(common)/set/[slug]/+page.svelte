@@ -42,10 +42,10 @@
 
 <style>
     .body{
-        width: 90%;
+        max-width: 100vh;
         display: table;
 
-        overflow: clip;
+        overflow: auto;
     }
 
     #create-overview {
@@ -77,6 +77,6 @@
     }
 
     :global(body) {
-        overflow: auto;
+        overflow: clip;
     }
 </style>
