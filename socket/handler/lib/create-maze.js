@@ -158,7 +158,7 @@ const create_maze = (height, length) => {
 
         for (let i = 0; i < cells.length; i++) {
             for (let i2 = 0; i2 < cells[i].length; i2++) {
-                if (cells[i][i2]) {
+                if (cells[i][i2].filled) {
                     walls.push([i2, i]);
                 }
             }
@@ -191,7 +191,7 @@ const create_maze = (height, length) => {
         const opens = [];
         for (let i = 0; i < cells.length; i++) {
             for (let i2 = 0; i2 < cells[i].length; i2++) {
-                if (!cells[i][i2]) {
+                if (!cells[i][i2].filled) {
                     opens.push([i2, i]);
                 }
             }
@@ -218,4 +218,4 @@ const create_maze = (height, length) => {
     return cells;
 };
 
-export {create_maze};
+export {create_maze}
