@@ -92,10 +92,10 @@
         </div>
     {/if}
 </div>
-
 <style>
     .background {
-        background: linear-gradient(140deg, rgba(175,212,233,1) 0%, rgba(120,154,173,1) 51%, rgba(53,82,98,1) 100%);
+        background-image: url("/join-background.png");
+        background-size: cover;
         height: 100vh;
         display: flex;
         flex-direction: column;

@@ -20,9 +20,12 @@
     let questionContainer;
     let entityContainer;
     let scoreContainer;
+    let mapContainer;
+
+    //if should show map
+    let mapVisible = false;
 
     //sprites
-    let hint;
     let player;
 
     //game state, normally play
@@ -32,8 +35,8 @@
     let allowMovement = false;
 
     let currentCell = {
-        x: 0,
-        y: 0
+        x: 1,
+        y: 1
     }
     let visitedCells = [];
 
@@ -55,8 +58,16 @@
 
     //socket events
     socket.on('maze:cell', (data) => {
-       celldata = data;
-       updateBackground();
+        celldata = data;
+        updateBackground();
+        if (mapVisible){
+            hideMap();
+            showMap();
+        }
+        setTimeout(() => {
+            if (!(visitedCells.length === 0)) nextQuestion(app);
+            if (!visitedCells.some((element) => data.x === element.x && data.y === element.y)) visitedCells.push(data);
+        }, 500);
     });
 
     socket.on('maze:tick', (players) => {
@@ -139,7 +150,6 @@
 
         //load assets
         const playertexture = await PIXI.Assets.load('/maze/Cube.png');
-        const hinttexture = await PIXI.Assets.load('/maze/hint.png');
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
         await PIXI.Assets.load('/maze/wall.png');
@@ -155,6 +165,7 @@
         questionContainer = new PIXI.Container();
         entityContainer = new PIXI.Container();
         scoreContainer = new PIXI.Container();
+        mapContainer = new PIXI.Container();
 
         app.stage.addChild(backgroundContainer);
         app.stage.addChild(wallsContainer);
@@ -173,13 +184,6 @@
         scoreContainer.addChild(score);
         app.stage.addChild(scoreContainer);
 
-        //draw hint
-        hint = PIXI.Sprite.from(hinttexture);
-        hint.anchor.set(0.5);
-        hint.visible = false;
-        hint.x = app.screen.width / 2;
-        hint.y = 100;
-        app.stage.addChild(hint);
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
@@ -230,6 +234,21 @@
         //draw entities
         app.stage.addChild(entityContainer);
 
+        //draw map
+        app.stage.addChild(mapContainer);
+
+        const map = keyboard('m');
+
+        map.press = () => {
+            mapVisible = true;
+            showMap();
+        }
+
+        map.release = () => {
+            mapVisible = false;
+            hideMap();
+        }
+
         //draw questions
         app.stage.addChild(questionContainer);
         nextQuestion(app);
@@ -269,33 +288,21 @@
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
             socket.emit('maze:move', gameCode, currentCell)
-            setTimeout(() => {
-                nextQuestion(app);
-            }, 500);
         }
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
             socket.emit('maze:move', gameCode, currentCell)
-            setTimeout(() => {
-                nextQuestion(app);
-            }, 500);
         }
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
             socket.emit('maze:move', gameCode, currentCell)
-            setTimeout(() => {
-                nextQuestion(app);
-            }, 500);
         }
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
             socket.emit('maze:move', gameCode, currentCell)
-            setTimeout(() => {
-                nextQuestion(app);
-            }, 500);
         }
 
         socket.emit('maze:tick', gameCode, player.x, player.y);
@@ -358,15 +365,11 @@
                 }
             }
         }
-
-        hideHint();
     }
 
     function nextQuestion(app) {
-        //this is scuffed but objects dont work
         //prevent farming points
-        if (visitedCells.includes(`${currentCell.x} ${currentCell.y}`)) return;
-        visitedCells.push(`${currentCell.x} ${currentCell.y}`);
+        if (visitedCells.some((element) => element.x === currentCell.x && element.y === currentCell.y)) return;
 
         questionContainer.removeChildren();
         questionContainer.visible = false;
@@ -457,8 +460,8 @@
             }, 2500);
         }
         toast.anchor.set(0.5);
-        toast.x = hint.x;
-        toast.y = hint.y * 2;
+        toast.x = app.screen.width / 2;
+        toast.y = wallThickness * 3;
 
         setIndex++;
         if (setIndex >= questions.length){
@@ -473,35 +476,69 @@
         app.stage.addChild(toast);
     }
 
-    function hideHint() {
-        hint.visible = false;
+    function showMap() {
+        mapContainer.removeChildren();
+        let rect = new PIXI.Graphics()
+            .beginFill(0x808080)
+            .drawRect(app.screen.width / 2 - 150, app.screen.width / 2 - 150, 300, 300)
+            .endFill();
+        mapContainer.addChild(rect);
+        for (const cell of visitedCells){
+            if (cell.x === currentCell.x && cell.y === currentCell.y) {
+                let c = new PIXI.Graphics()
+                    .beginFill(0xFFAC1C)
+                    .drawRect(app.screen.width / 2 - 150 + (cell.x * 15), app.screen.width / 2 - 150 + (cell.y * 15), 15, 15)
+                    .endFill();
+                mapContainer.addChild(c);
+            } else {
+                let c = new PIXI.Graphics()
+                    .beginFill(0xFFFFFF)
+                    .drawRect(app.screen.width / 2 - 150 + (cell.x * 15), app.screen.width / 2 - 150 + (cell.y * 15), 15, 15)
+                    .endFill();
+                mapContainer.addChild(c);
+            }
+            for (const wall in cell.walls) {
+                if (cell.walls[wall]) {
+                    if (wall === 'left') {
+                        let w = new PIXI.Graphics()
+                            .beginFill(0x000000)
+                            .drawRect(app.screen.width / 2 - 150 + ((cell.x - 1) * 15), app.screen.width / 2 - 150 + (cell.y * 15), 15, 15)
+                            .endFill();
+                        mapContainer.addChild(w);
+                        continue;
+                    }
+                    if (wall === 'right') {
+                        let w = new PIXI.Graphics()
+                            .beginFill(0x000000)
+                            .drawRect(app.screen.width / 2 - 150 + ((cell.x + 1) * 15), app.screen.width / 2 - 150 + (cell.y * 15), 15, 15)
+                            .endFill();
+                        mapContainer.addChild(w);
+                        continue;
+                    }
+                    if (wall === 'up') {
+                        let w = new PIXI.Graphics()
+                            .beginFill(0x000000)
+                            .drawRect(app.screen.width / 2 - 150 + (cell.x * 15), app.screen.width / 2 - 150 + ((cell.y - 1) * 15), 15, 15)
+                            .endFill();
+                        mapContainer.addChild(w);
+                        continue;
+                    }
+                    if (wall === 'down') {
+                        let w = new PIXI.Graphics()
+                            .beginFill(0x000000)
+                            .drawRect(app.screen.width / 2 - 150 + (cell.x * 15), app.screen.width / 2 - 150 + ((cell.y + 1) * 15), 15, 15)
+                            .endFill();
+                        mapContainer.addChild(w);
+                    }
+                }
+            }
+        }
+        mapContainer.visible = true;
     }
 
-    //TODO: replace this with an 'explored' map
-    /*function showHint() {
-        const solution = maze.generateSolution({
-            row: currentCell.y,
-            column: currentCell.x
-        }, {
-            row: maze.cells.length - 1,
-            column: maze.cells[0].length - 1
-        });
-
-        const best = solution.toJSON()[1];
-        if (best.column > currentCell.x){
-            hint.angle = 0;
-        }
-        if (best.column < currentCell.x){
-            hint.angle = 180;
-        }
-        if (best.row < currentCell.y){
-            hint.angle = 270;
-        }
-        if (best.row > currentCell.y){
-            hint.angle = 90;
-        }
-        hint.visible = true;
-    }*/
+    function hideMap() {
+        mapContainer.visible = false;
+    }
 
 </script>
 
