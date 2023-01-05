@@ -70,6 +70,7 @@
         }, 500);
     });
 
+    //TODO: make a delta based tick system, to avoid laggy player frame rates
     socket.on('maze:tick', (players) => {
         if (entityContainer === undefined) return;
         players = JSON.parse(players);
@@ -199,7 +200,7 @@
             up = keyboard("ArrowUp"),
             down = keyboard("ArrowDown");
 
-        const moveDistance = app.screen.width / 500
+        const moveDistance = app.screen.width / 250;
 
         left.press = () => {
             player.vx -= moveDistance;
@@ -267,14 +268,15 @@
 
         //add updates
         state = play;
+        app.ticker.maxFPS = 60;
         app.ticker.add((delta) => state(delta));
         return app;
     }
 
     function play(delta) {
         if (allowMovement){
-            player.x += player.vx;
-            player.y += player.vy;
+            player.x += player.vx + delta;
+            player.y += player.vy + delta;
         }
         for (const child of wallsContainer.children){
             //this is scuffed
