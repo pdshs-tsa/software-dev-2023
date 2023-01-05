@@ -77,11 +77,16 @@
         entityContainer.removeChildren();
         const visible = players.filter((p) => p.cx === currentCell.x && p.cy === currentCell.y && p.id !== socket.id);
         visible.forEach((p) => {
-            let sprite = PIXI.Sprite.from('/maze/player.png');
-            sprite.anchor.set(0.5, 0);
+            let sprite = PIXI.Sprite.from('/maze/entity.png');
+            sprite.anchor.set(0.5);
 
             sprite.x = p.x;
             sprite.y = p.y;
+            sprite.angle = p.angle;
+
+            if (p.scale < 0){
+                sprite.scale.x *= -1;
+            }
 
             let nametag = new PIXI.Text(`${p.username}`, {
                 fontFamily: 'Courier New',
@@ -154,6 +159,7 @@
         await PIXI.Assets.load('/maze/fullscreen.png');
         await PIXI.Assets.load('/maze/question-box.png');
         await PIXI.Assets.load('/maze/wall.png');
+        await PIXI.Assets.load('/maze/entity.png');
 
         //load backgrounds
         for (const i of ['/maze/background-1.png', "/maze/background-2.png", "/maze/background-3.png", "/maze/background-4.png"]){
@@ -188,45 +194,109 @@
 
         //draw player
         player = PIXI.Sprite.from(playertexture);
-        player.anchor.set(0.5, 0);
+        player.anchor.set(0.5);
 
         player.x = app.screen.width / 2;
         player.y = app.screen.height / 2;
         player.vx = 0;
         player.vy = 0;
+        player.angle = 0;
 
         const left = keyboard("ArrowLeft"),
             right = keyboard("ArrowRight"),
             up = keyboard("ArrowUp"),
             down = keyboard("ArrowDown");
 
-        const moveDistance = app.screen.width / 280;
+        const moveDistance = app.screen.width / 250;
 
+        //angles is ugly but whatever
         left.press = () => {
+            player.angle = 0;
+            if (player.scale.x < 0) {
+                player.scale.x *= -1;
+            }
             player.vx -= moveDistance;
         }
         left.release = () => {
+            if (up.isDown){
+                if (player.scale.x < 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
+            if (down.isDown){
+                if (player.scale.x > 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
             player.vx += moveDistance;
         }
 
         right.press = () => {
+            player.angle = 0;
+            if (player.scale.x > 0) {
+                player.scale.x *= -1;
+            }
             player.vx += moveDistance;
         }
         right.release = () => {
+            if (up.isDown){
+                if (player.scale.x < 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
+            if (down.isDown){
+                if (player.scale.x > 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
             player.vx -= moveDistance;
         }
 
         up.press = () => {
+            if (player.scale.x < 0){
+                player.angle = 270;
+            } else {
+                player.angle = 90;
+            }
             player.vy -= moveDistance;
         }
         up.release = () => {
+            if (down.isDown){
+                if (player.scale.x > 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
+            if (right.isDown || left.isDown) player.angle = 0;
             player.vy += moveDistance;
         }
 
         down.press = () => {
+            if (player.scale.x > 0){
+                player.angle = 270;
+            } else {
+                player.angle = 90;
+            }
             player.vy += moveDistance;
         }
         down.release = () => {
+            if (up.isDown){
+                if (player.scale.x < 0){
+                    player.angle = 270;
+                } else {
+                    player.angle = 90;
+                }
+            }
+            if (right.isDown || left.isDown) player.angle = 0;
             player.vy -= moveDistance;
         }
 
@@ -281,7 +351,7 @@
         for (const child of wallsContainer.children){
             //this is scuffed
             const boundingBox = child.getBounds();
-            if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y, boundingBox.y + boundingBox.height)){
+            if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y + wallThickness, boundingBox.y + boundingBox.height * 2.2)){
                 player.x -= player.vx;
                 player.y -= player.vy;
             }
@@ -307,7 +377,12 @@
             socket.emit('maze:move', gameCode, currentCell)
         }
 
-        socket.emit('maze:tick', gameCode, player.x, player.y);
+        socket.emit('maze:tick', gameCode, {
+            x: player.x,
+            y: player.y,
+            angle: player.angle,
+            scale: player.scale.x
+        });
     }
 
     function playerTouchingSpecificWall(leftBound, rightBound, upBound, downBound) {

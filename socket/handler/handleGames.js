@@ -144,6 +144,9 @@ const gameStart = async function (code, mode) {
             //this is viewport position
             p.x = 0;
             p.y = 0;
+
+            p.angle = 0;
+            p.scale = 1;
         });
 
         games[code].maze[1][1].background = Math.floor(Math.random() * 3) + 1;
@@ -229,12 +232,14 @@ const mazeSendCellData = function (socket, code, obj) {
     });
 }
 
-const mazeTick = function(code, x, y){
+const mazeTick = function(code, obj){
     const socket = this;
     if (games[code] === undefined) return;
     const player = games[code].players.find((element) => element.id === socket.id);
-    player.x = x;
-    player.y = y;
+    player.x = obj.x;
+    player.y = obj.y;
+    player.angle = obj.angle;
+    player.scale = obj.scale;
 }
 
 const mazePlayerAnswer = function (code, correct, time) {
