@@ -200,7 +200,7 @@
             up = keyboard("ArrowUp"),
             down = keyboard("ArrowDown");
 
-        const moveDistance = app.screen.width / 250;
+        const moveDistance = app.screen.width / 280;
 
         left.press = () => {
             player.vx -= moveDistance;
@@ -275,8 +275,8 @@
 
     function play(delta) {
         if (allowMovement){
-            player.x += player.vx + delta;
-            player.y += player.vy + delta;
+            player.x += player.vx;
+            player.y += player.vy;
         }
         for (const child of wallsContainer.children){
             //this is scuffed
