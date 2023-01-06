@@ -327,7 +327,7 @@ const mazePoiInteract = function(code, obj, poi) {
         io.to(games[code].code).emit('answer', username, games[code].answers[socket.id].score);
         games[code].players.forEach((p) => {
             if (p.cx === obj.x && p.cy === obj.y){
-                mazeSendCellData(io.sockets.sockets.get(socket.id), code, obj);
+                mazeSendCellData(io.sockets.sockets.get(p.id), code, obj);
             }
         });
     }
