@@ -203,6 +203,7 @@ const mazeMove = function (code, obj){
 const mazeSendCellData = function (socket, code, obj) {
     if (games[code] === undefined) return;
 
+    //load properties
     if (!('background' in games[code].maze[obj.y][obj.x])){
         games[code].maze[obj.y][obj.x].background =  Math.floor(Math.random() * 3) + 1;
     }
@@ -222,6 +223,7 @@ const mazeSendCellData = function (socket, code, obj) {
         }
         games[code].maze[obj.y][obj.x].walls = walls;
     }
+
     games[code].maze[obj.y][obj.x].x = obj.x;
     games[code].maze[obj.y][obj.x].y = obj.y;
     socket.emit('maze:cell', {
@@ -236,6 +238,7 @@ const mazeTick = function(code, obj){
     const socket = this;
     if (games[code] === undefined) return;
     const player = games[code].players.find((element) => element.id === socket.id);
+    if (player === undefined) return;
     player.x = obj.x;
     player.y = obj.y;
     player.angle = obj.angle;
