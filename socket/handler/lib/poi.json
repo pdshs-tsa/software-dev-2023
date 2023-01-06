@@ -1,0 +1,42 @@
+[
+  {
+    "path": "common/coral-1.png",
+    "weight": 6,
+    "cost": 1
+  },
+  {
+    "path": "common/coral-2.png",
+    "weight": 6,
+    "cost": 1
+  },
+  {
+    "path": "common/coral-3.png",
+    "weight": 6,
+    "cost": 1
+  },
+  {
+    "path": "common/coral-4.png",
+    "weight": 6,
+    "cost": 1
+  },
+  {
+    "path": "common/castle.png",
+    "weight": 5,
+    "cost": 2
+  },
+  {
+    "path": "common/vent.png",
+    "weight": 3,
+    "cost": 2
+  },
+  {
+    "path": "common/kelp.png",
+    "weight": 5,
+    "cost": 1
+  },
+  {
+    "path": "common/coins.png",
+    "weight": 4,
+    "cost": 3
+  }
+]

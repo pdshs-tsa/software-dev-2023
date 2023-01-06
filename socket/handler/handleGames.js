@@ -1,8 +1,17 @@
 import database from "../../database.js";
 import {create_maze} from "./lib/create-maze.js";
+import poi from "./lib/poi.json";
 
 let io;
 const games = {};
+
+//maze poi weighted list, no point regenerating this so itll be static
+const maze_poi_weighted = [];
+poi.forEach((element) => {
+    for (let i = 0; i < element.weight; i++){
+        maze_poi_weighted.push(element);
+    }
+});
 
 /*
     IMPORTANT THINGS TO REMEMBER:
@@ -223,12 +232,32 @@ const mazeSendCellData = function (socket, code, obj) {
         }
         games[code].maze[obj.y][obj.x].walls = walls;
     }
+    if (!('poi' in games[code].maze[obj.y][obj.x])){
+        //cost is between 10 and 25
+        let list = [];
+        let allocated = Math.floor(Math.random() * 15) + 10
+        while (allocated > 0){
+            const poi = maze_poi_weighted[Math.floor(Math.random() * maze_poi_weighted.length)];
 
-    games[code].maze[obj.y][obj.x].x = obj.x;
-    games[code].maze[obj.y][obj.x].y = obj.y;
+            let obj;
+            do{
+                obj = {
+                    path: poi.path,
+                    x: Math.floor(Math.random() * 11) + 1,
+                    y: Math.floor(Math.random() * 11) + 1
+                }
+            } while (list.some((e) => e.x === obj.x && e.y === obj.y))
+
+            allocated -= poi.cost;
+            list.push(obj);
+        }
+        games[code].maze[obj.y][obj.x].poi = list;
+    }
+
     socket.emit('maze:cell', {
         walls: games[code].maze[obj.y][obj.x].walls,
         background: games[code].maze[obj.y][obj.x].background,
+        poi: games[code].maze[obj.y][obj.x].poi,
         x: obj.x,
         y: obj.y
     });

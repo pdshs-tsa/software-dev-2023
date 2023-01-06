@@ -5,6 +5,7 @@
     import {createEventDispatcher} from "svelte";
     import {socket} from "../../../socket/socket.js";
     import {goto} from "$app/navigation";
+    import fs from 'fs';
 
     const dispatch = createEventDispatcher();
 
@@ -21,6 +22,7 @@
     let entityContainer;
     let scoreContainer;
     let mapContainer;
+    let poiContainer;
 
     //if should show map
     let mapVisible = false;
@@ -173,9 +175,11 @@
         entityContainer = new PIXI.Container();
         scoreContainer = new PIXI.Container();
         mapContainer = new PIXI.Container();
+        poiContainer = new PIXI.Container();
 
         app.stage.addChild(backgroundContainer);
         app.stage.addChild(wallsContainer);
+        app.stage.addChild(poiContainer);
 
         //draw score
         let score = new PIXI.Text(`Score: 0`, {
@@ -392,6 +396,7 @@
     function updateBackground(){
         wallsContainer.removeChildren();
         backgroundContainer.removeChildren();
+        poiContainer.removeChildren();
         
         const bkgSprite = PIXI.Sprite.from(`/maze/background-${celldata.background}.png`);
         bkgSprite.x = 0;
@@ -441,6 +446,15 @@
                     wallsContainer.addChild(wall);
                 }
             }
+        }
+
+        //draw poi
+        for (const poi of celldata.poi) {
+            const sprite = PIXI.Sprite.from('/maze/poi/' + poi.path);
+            sprite.anchor.set(0.5);
+            sprite.x = 50 * poi.x;
+            sprite.y = 50 * poi.y;
+            poiContainer.addChild(sprite);
         }
     }
 
