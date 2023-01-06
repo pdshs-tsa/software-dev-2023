@@ -25,7 +25,7 @@
 <div class="background">
     <div class="body" in:fly={{ y: 25, duration: 250 }}>
         <h1>Enter your username</h1>
-        <input name="code" id="code-input" type="text" placeholder="Username" autocomplete="off" bind:value={username}>
+        <input name="code" id="code-input" type="text" placeholder="Username" maxlength="16" autocomplete="off" bind:value={username}>
         <button id="code-submit" on:click={submitGame}>Go!</button>
     </div>
     {#if invalid}

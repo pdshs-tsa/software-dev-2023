@@ -1,6 +1,5 @@
 // socket-handler.js
 import { Server } from "socket.io";
-import {instrument} from "@socket.io/admin-ui";
 import * as gameHandler from './handler/handleGames.js';
 
 export default function injectSocketIO(server) {
@@ -29,7 +28,8 @@ export default function injectSocketIO(server) {
         socket.on('maze:cell', gameHandler.fetchCellData); //fetch cell data for maze
         socket.on('maze:tick', gameHandler.mazeTick); //update player position
         socket.on('maze:move', gameHandler.mazeMove); //on cell move
-        socket.on('maze:answer', gameHandler.mazePlayerAnswer)
+        socket.on('maze:answer', gameHandler.mazePlayerAnswer);
+        socket.on('maze:poi', gameHandler.mazePoiInteract); //on poi interact
     }
 
     io.on('connection', (socket) => {

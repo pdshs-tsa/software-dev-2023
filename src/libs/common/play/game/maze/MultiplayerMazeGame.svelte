@@ -5,7 +5,6 @@
     import {createEventDispatcher} from "svelte";
     import {socket} from "../../../socket/socket.js";
     import {goto} from "$app/navigation";
-    import fs from 'fs';
 
     const dispatch = createEventDispatcher();
 
@@ -23,6 +22,7 @@
     let scoreContainer;
     let mapContainer;
     let poiContainer;
+    let poiAlertContainer;
 
     //if should show map
     let mapVisible = false;
@@ -51,6 +51,9 @@
         .map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
+
+    let selectedPOI = {};
+    let poiQuestion = false;
 
     //data for the current cell
     let celldata;
@@ -176,24 +179,11 @@
         scoreContainer = new PIXI.Container();
         mapContainer = new PIXI.Container();
         poiContainer = new PIXI.Container();
+        poiAlertContainer = new PIXI.Container();
 
         app.stage.addChild(backgroundContainer);
         app.stage.addChild(wallsContainer);
         app.stage.addChild(poiContainer);
-
-        //draw score
-        let score = new PIXI.Text(`Score: 0`, {
-            fontFamily: 'Courier New',
-            fontWeight: "bolder",
-            fontSize: 20,
-            fill: 0x000000,
-            align: "left"
-        });
-
-        score.x = wallThickness * 2;
-        score.y = app.screen.height - wallThickness * 2.5;
-        scoreContainer.addChild(score);
-        app.stage.addChild(scoreContainer);
 
 
         //draw player
@@ -309,6 +299,23 @@
         //draw entities
         app.stage.addChild(entityContainer);
 
+        //draw poi toast
+        let poiAlert = new PIXI.Text("Press enter to interact", {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 20,
+            fill: 0x000000,
+            align: "center"
+        });
+
+        poiAlert.x = app.screen.width / 2;
+        poiAlert.y = app.screen.height * 0.9 - wallThickness;
+        poiAlert.anchor.set(0.5);
+
+        poiAlertContainer.addChild(poiAlert);
+        app.stage.addChild(poiAlertContainer);
+        poiAlertContainer.visible = false;
+
         //draw map
         app.stage.addChild(mapContainer);
 
@@ -322,6 +329,16 @@
         map.release = () => {
             mapVisible = false;
             hideMap();
+        }
+
+        //interact with poi
+        const poiInteract = keyboard('Enter');
+
+        poiInteract.press = () => {
+            if (selectedPOI.x && selectedPOI.y){
+                poiQuestion = true;
+                nextQuestion(app);
+            }
         }
 
         //draw questions
@@ -339,6 +356,20 @@
             dispatch('fullscreen');
         });
         app.stage.addChild(fullscreen);
+
+        //draw score
+        let score = new PIXI.Text(`Score: 0`, {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 20,
+            fill: 0x000000,
+            align: "left"
+        });
+
+        score.x = wallThickness * 2;
+        score.y = app.screen.height - wallThickness * 2.5;
+        scoreContainer.addChild(score);
+        app.stage.addChild(scoreContainer);
 
         //add updates
         state = play;
@@ -360,6 +391,20 @@
                 player.y -= player.vy;
             }
         }
+        let touchingPOI = false;
+        for (const child of poiContainer.children){
+            const boundingBox = child.getBounds();
+            if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y + wallThickness, boundingBox.y + boundingBox.height * 2.2)){
+                touchingPOI = true;
+                //this could break but it shouldnt
+                selectedPOI = {
+                    x: child.x,
+                    y: child.y
+                }
+            }
+        }
+        poiAlertContainer.visible = touchingPOI;
+        if (!touchingPOI) selectedPOI = {};
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
@@ -460,7 +505,7 @@
 
     function nextQuestion(app) {
         //prevent farming points
-        if (visitedCells.some((element) => element.x === currentCell.x && element.y === currentCell.y)) return;
+        if (!poiQuestion && visitedCells.some((element) => element.x === currentCell.x && element.y === currentCell.y)) return;
 
         questionContainer.removeChildren();
         questionContainer.visible = false;
@@ -530,7 +575,13 @@
                 fill: 0x000000,
                 align: "left"
             });
-            socket.emit('maze:answer', gameCode, true, time);
+            if (poiQuestion && selectedPOI !== {}) {
+                const poi = celldata.poi.find((e) => e.x === selectedPOI.x / 50 && e.y === selectedPOI.y / 50);
+                socket.emit('maze:poi', gameCode, currentCell, poi);
+                poiQuestion = false;
+            } else {
+                socket.emit('maze:answer', gameCode, true, time)
+            }
             allowMovement = true;
 
             setTimeout(() => {

@@ -300,6 +300,39 @@ const mazePlayerAnswer = function (code, correct, time) {
     io.to(games[code].code).emit('answer', username, games[code].answers[socket.id].score);
 }
 
+const mazePoiInteract = function(code, obj, poi) {
+    const socket = this;
+    const index = games[code].maze[obj.y][obj.x].poi.findIndex((e) => poi.x === e.x && poi.y === e.y);
+    if (index >= 0) {
+        let username = games[code].players.find((element) => element.id === socket.id).username
+        games[code].maze[obj.y][obj.x].poi.splice(index, 1);
+        switch (poi.path.split('/')[0]) {
+            case 'common':
+                games[code].answers[socket.id].score += 250;
+                break;
+            case 'rare':
+                games[code].answers[socket.id].score += 500;
+                break;
+            case 'epic':
+                games[code].answers[socket.id].score += 1000;
+                break;
+            case 'legendary':
+                games[code].answers[socket.id].score += 2000;
+                break;
+            default:
+                games[code].answers[socket.id].score += 0;
+        }
+
+        socket.emit('ack:maze:answer', games[code].answers[socket.id].score);
+        io.to(games[code].code).emit('answer', username, games[code].answers[socket.id].score);
+        games[code].players.forEach((p) => {
+            if (p.cx === obj.x && p.cy === obj.y){
+                mazeSendCellData(io.sockets.sockets.get(socket.id), code, obj);
+            }
+        });
+    }
+}
+
 export {
     init,
     registerPlayer,
@@ -312,5 +345,6 @@ export {
     fetchCellData,
     mazeTick,
     mazeMove,
-    mazePlayerAnswer
+    mazePlayerAnswer,
+    mazePoiInteract
 }
