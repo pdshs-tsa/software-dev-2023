@@ -1,12 +1,14 @@
 import database from "../../database.js";
 import {create_maze} from "./lib/create-maze.js";
-import poi from "./lib/poi.json";
-
+import * as fs from "fs";
 let io;
 const games = {};
 
+const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+
 //maze poi weighted list, no point regenerating this so itll be static
 const maze_poi_weighted = [];
+const poi = loadJSON('./lib/poi.json');
 poi.forEach((element) => {
     for (let i = 0; i < element.weight; i++){
         maze_poi_weighted.push(element);
