@@ -75,7 +75,7 @@
         }, 500);
     });
 
-    //TODO: make a delta based tick system, to avoid laggy player frame rates
+    //TODO: make a time based tick system, to avoid laggy player frame rates
     socket.on('maze:tick', (players) => {
         if (entityContainer === undefined) return;
         players = JSON.parse(players);
@@ -386,7 +386,7 @@
         for (const child of wallsContainer.children){
             //this is scuffed
             const boundingBox = child.getBounds();
-            if (playerTouchingSpecificWall(boundingBox.x, boundingBox.x + boundingBox.width, boundingBox.y + wallThickness, boundingBox.y + boundingBox.height * 2.2)){
+            if (playerTouchingSpecificWall(boundingBox.x + wallThickness, boundingBox.x + boundingBox.width, boundingBox.y + wallThickness, boundingBox.y + boundingBox.height * 2.2)){
                 player.x -= player.vx;
                 player.y -= player.vy;
             }
@@ -408,21 +408,45 @@
         if (player.y <= 10){
             currentCell.y -= 1;
             player.y = app.screen.height - 15;
+            if (player.x <= wallThickness * 2) {
+                player.x += wallThickness * 2;
+            }
+            if (player.x >= app.screen.width - wallThickness * 2) {
+                player.x -= wallThickness * 2;
+            }
             socket.emit('maze:move', gameCode, currentCell)
         }
         if (player.y >= app.screen.height - 10){
             currentCell.y += 1;
             player.y = 15;
+            if (player.x <= wallThickness * 2) {
+                player.x += wallThickness * 2;
+            }
+            if (player.x >= app.screen.width - wallThickness * 2) {
+                player.x -= wallThickness * 2;
+            }
             socket.emit('maze:move', gameCode, currentCell)
         }
         if (player.x <= 10){
             currentCell.x -= 1;
             player.x = app.screen.width - 15;
+            if (player.y <= wallThickness * 2) {
+                player.y += wallThickness * 2;
+            }
+            if (player.y >= app.screen.height - wallThickness * 2) {
+                player.y -= wallThickness * 2;
+            }
             socket.emit('maze:move', gameCode, currentCell)
         }
         if (player.x >= app.screen.width - 10){
             currentCell.x += 1;
             player.x = 15;
+            if (player.y <= wallThickness * 2) {
+                player.y += wallThickness * 2;
+            }
+            if (player.y >= app.screen.height - wallThickness * 2) {
+                player.y -= wallThickness * 2;
+            }
             socket.emit('maze:move', gameCode, currentCell)
         }
 
