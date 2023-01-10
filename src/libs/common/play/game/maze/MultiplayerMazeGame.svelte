@@ -335,7 +335,7 @@
         const poiInteract = keyboard('Enter');
 
         poiInteract.press = () => {
-            if (selectedPOI.x && selectedPOI.y){
+            if (selectedPOI.x && selectedPOI.y && allowMovement){
                 poiQuestion = true;
                 nextQuestion(app);
             }
