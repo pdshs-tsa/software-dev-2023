@@ -162,9 +162,16 @@ const gameStart = async function (code, mode) {
 
         games[code].maze[1][1].background = Math.floor(Math.random() * 3) + 1;
 
-        games[code].tick = setInterval(() => {
-            io.to(code).emit('maze:tick', JSON.stringify(games[code].players));
+        let interval = setInterval(() => {
+            try {
+                io.to(code).emit('maze:tick', JSON.stringify(games[code].players));
+            } catch (err) {
+                io.to(code).emit('end');
+                clearInterval(interval);
+            }
         }, 20);
+
+        games[code].tick = interval;
     }
 
     games[code].started = true;
