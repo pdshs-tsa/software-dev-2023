@@ -237,7 +237,7 @@ const mazeSendCellData = function (socket, code, obj) {
     if (!('poi' in games[code].maze[obj.y][obj.x])){
         //cost is between 10 and 25
         let list = [];
-        let allocated = Math.floor(Math.random() * 15) + 10
+        let allocated = Math.floor(Math.random() * 25) + 15
         while (allocated > 0){
             const poi = maze_poi_weighted[Math.floor(Math.random() * maze_poi_weighted.length)];
 
