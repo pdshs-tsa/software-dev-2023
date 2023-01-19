@@ -304,10 +304,21 @@ const mazePlayerAnswer = function (code, correct, time) {
 
 const mazePoiInteract = function(code, obj, poi) {
     const socket = this;
+    if (poi === null || obj === null) return;
     const index = games[code].maze[obj.y][obj.x].poi.findIndex((e) => poi.x === e.x && poi.y === e.y);
     if (index >= 0) {
         let username = games[code].players.find((element) => element.id === socket.id).username
         games[code].maze[obj.y][obj.x].poi.splice(index, 1);
+
+        //this is gross, prevent potential crash
+        if (!(socket.id in games[code].answers)) {
+            games[code].answers[socket.id] = {
+                id: socket.id,
+                username: username,
+                score: 0
+            };
+        }
+
         switch (poi.path.split('/')[0]) {
             case 'common':
                 games[code].answers[socket.id].score += 250;
