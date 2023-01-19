@@ -156,8 +156,10 @@
         PIXI.utils.clearTextureCache();
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         PIXI.settings.ROUND_PIXELS = false;
-        PIXI.settings.RESOLUTION = 1;
-        window.devicePixelRatio = 1;
+        PIXI.settings.RESOLUTION = 3;
+        window.devicePixelRatio = 3;
+
+
 
         //load assets
         const playertexture = await PIXI.Assets.load('/maze/player.png');
@@ -538,20 +540,22 @@
         box.anchor.set(0.5);
         box.x = app.screen.width / 2;
         box.y = app.screen.height / 2;
-        box.height = app.screen.height * 0.45;
+        box.height = app.screen.height * 0.6;
         box.width = app.screen.width * 0.9;
 
         const questionText = new PIXI.Text(questions[setIndex].prompt, {
             fontFamily: 'Courier New',
             fontWeight: "bolder",
-            fontSize: 18,
+            fontSize: 17,
             fill: 0x000000,
             align: "left",
+            wordWrap: true,
+            wordWrapWidth: box.width - 40
         });
 
         questionText.anchor.set(0.5);
         questionText.x = box.x;
-        questionText.y = box.y - box.height / 4;
+        questionText.y = box.y - box.height / 3;
 
         questionContainer.addChild(box);
         questionContainer.addChild(questionText);
@@ -561,18 +565,20 @@
             .sort((a, b) => a.sort - b.sort)
             .map(({ value }) => value);
 
-        let positions = [{x: box.x - box.width / 4, y: box.y},
-            {x: box.x + box.width / 4, y: box.y},
-            {x: box.x - box.width / 4, y: box.y + box.height / 4},
-            {x: box.x + box.width / 4, y: box.y + box.height / 4    }]
+        let positions = [{x: box.x - box.width / 4, y: box.y * 1.25},
+            {x: box.x + box.width / 4, y: box.y * 1.25},
+            {x: box.x - box.width / 4, y: box.y * 0.9},
+            {x: box.x + box.width / 4, y: box.y * 0.9}]
 
         for (let i = 0; i < answers.length; i++){
             const answer = new PIXI.Text(`${answers[i]}`, {
                 fontFamily: 'Courier New',
                 fontWeight: "bolder",
-                fontSize: 18,
+                fontSize: 14,
                 fill: 0x000000,
-                align: "left"
+                align: "left",
+                wordWrap: true,
+                wordWrapWidth: (box.width / 2) - 40
             });
 
             answer.anchor.set(0.5);
@@ -617,7 +623,9 @@
                 fontWeight: "bolder",
                 fontSize: 20,
                 fill: 0x000000,
-                align: "left"
+                align: "left",
+                wordWrap: true,
+                wordWrapWidth: app.screen.width - 20
             });
 
             setTimeout(() => {
