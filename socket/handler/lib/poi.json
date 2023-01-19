@@ -26,8 +26,8 @@
   },
   {
     "path": "common/vent.png",
-    "weight": 3,
-    "cost": 2
+    "weight": 4,
+    "cost": 4
   },
   {
     "path": "common/kelp.png",
@@ -36,7 +36,27 @@
   },
   {
     "path": "common/coins.png",
-    "weight": 4,
+    "weight": 5,
     "cost": 3
+  },
+  {
+    "path": "rare/anchor.png",
+    "weight": 4,
+    "cost": 4
+  },
+  {
+    "path": "rare/raft.png",
+    "weight": 3,
+    "cost": 6
+  },
+  {
+    "path": "rare/treasure.png",
+    "weight": 3,
+    "cost": 4
+  },
+  {
+    "path": "epic/crystal_cave.png",
+    "weight": 2,
+    "cost": 7
   }
 ]
