@@ -304,6 +304,22 @@ class Database {
         });
         await classes.set(`${classcode}.students`, studentData);
     }
+
+    async fetchSetTable() {
+        return await sets.all();
+    }
+
+    async fetchUserTable() {
+        return await users.all();
+    }
+
+    async fetchSessionTable() {
+        return await sessions.all();
+    }
+
+    async fetchClassTable() {
+        return await classes.all();
+    }
 }
 
 const database = new Database();
