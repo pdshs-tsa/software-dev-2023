@@ -311,6 +311,7 @@ const mazePlayerAnswer = function (code, correct, time) {
 
 const mazePoiInteract = function(code, obj, poi) {
     const socket = this;
+    if (games[code] === undefined) return;
     if (poi === null || obj === null) return;
     const index = games[code].maze[obj.y][obj.x].poi.findIndex((e) => poi.x === e.x && poi.y === e.y);
     if (index >= 0) {
