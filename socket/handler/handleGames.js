@@ -220,6 +220,7 @@ const mazeMove = function (code, obj){
 
 const mazeSendCellData = function (socket, code, obj) {
     if (games[code] === undefined) return;
+    if (socket === undefined) return;
 
     //load properties
     if (!('background' in games[code].maze[obj.y][obj.x])){
