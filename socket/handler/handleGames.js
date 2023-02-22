@@ -98,10 +98,6 @@ const destroyGame = function (code) {
     games[code].players.forEach((element) => {
        io.sockets.sockets.get(element.id).leave(code);
     });
-    //clear game loop
-    if (games[code].tick){
-        clearInterval(games[code].tick);
-    }
     delete games[code];
 }
 
@@ -152,26 +148,25 @@ const gameStart = async function (code, mode) {
             p.cx = 1;
             p.cy = 1;
 
-            //this is viewport position
-            p.x = 0;
-            p.y = 0;
+            //this is current viewport position
+            p.newx = 0;
+            p.newy = 0;
+
+            //old viewport position
+            p.oldx = 0;
+            p.oldy = 0;
 
             p.angle = 0;
             p.scale = 1;
+
+            //this is the cached (last) movement timestamp
+            p.cachedmovetimestamp = Date.now();
+
+            //current move timestamp
+            p.movetimestamp = Date.now();
         });
 
         games[code].maze[1][1].background = Math.floor(Math.random() * 3) + 1;
-
-        let interval = setInterval(() => {
-            try {
-                io.to(code).emit('maze:tick', JSON.stringify(games[code].players));
-            } catch (err) {
-                io.to(code).emit('end');
-                clearInterval(interval);
-            }
-        }, 20);
-
-        games[code].tick = interval;
     }
 
     games[code].started = true;
@@ -180,7 +175,9 @@ const gameStart = async function (code, mode) {
 const classicPlayerAnswer = function (code, correct, time) {
     const socket = this;
     if (games[code] === undefined) return;
-    let username = games[code].players.find((element) => element.id === socket.id).username
+    let player = games[code].players.find((element) => element.id === socket.id);
+    if (player === undefined) return;
+    let username = player.username;
     if (!(socket.id in games[code].answers)) {
         games[code].answers[socket.id] = {
             id: socket.id,
@@ -278,16 +275,25 @@ const mazeTick = function(code, obj){
     if (games[code] === undefined) return;
     const player = games[code].players.find((element) => element.id === socket.id);
     if (player === undefined) return;
-    player.x = obj.x;
-    player.y = obj.y;
+    let index = games[code].players.indexOf(player);
+    player.oldx = player.newx;
+    player.oldy = player.newy
+    player.newx = obj.x;
+    player.newy = obj.y;
     player.angle = obj.angle;
     player.scale = obj.scale;
+    player.cachedmovetimestamp = player.movetimestamp;
+    player.movetimestamp = Date.now();
+    games[code].players[index] = player;
+    io.to(games[code].code).emit('maze:tick', JSON.stringify(player));
 }
 
 const mazePlayerAnswer = function (code, correct, time) {
     const socket = this;
     if (games[code] === undefined) return;
-    let username = games[code].players.find((element) => element.id === socket.id).username
+    const player = games[code].players.find((element) => element.id === socket.id);
+    if (player === undefined) return;
+    let username = player.username
     if (!(socket.id in games[code].answers)) {
         games[code].answers[socket.id] = {
             id: socket.id,
@@ -354,6 +360,8 @@ const mazePoiInteract = function(code, obj, poi) {
         });
     }
 }
+
+
 
 export {
     init,
