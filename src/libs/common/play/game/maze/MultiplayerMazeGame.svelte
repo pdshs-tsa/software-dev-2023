@@ -128,7 +128,7 @@
         nametag.name = player.id + 'tag';
         nametag.anchor.set(0.5);
         nametag.x = sprite.x;
-        nametag.y = sprite.y - sprite.height * 0.5;
+        nametag.y = sprite.y - sprite.height * 0.65;
 
         entityContainer.addChild(nametag);
         entityContainer.addChild(sprite);
@@ -426,7 +426,7 @@
                 angle: player.angle,
                 scale: player.scale.x
             });
-        }, 500);
+        }, 750);
         return app;
     }
 
