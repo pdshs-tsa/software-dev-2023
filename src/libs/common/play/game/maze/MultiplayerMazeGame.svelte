@@ -83,7 +83,7 @@
         console.log('recieved');
         if (entityContainer === undefined) return;
         player = JSON.parse(player);
-        if ((player.cx !== currentCell.x && player.cy !== currentCell.y) || player.id === socket.id) {
+        if (player.cx !== currentCell.x || player.cy !== currentCell.y || player.id === socket.id) {
             let index = entityContainer.children.findIndex((p) => p.name === player.id);
             if (index !== -1) {
                 entityContainer.removeChildAt(index);
@@ -426,7 +426,7 @@
                 angle: player.angle,
                 scale: player.scale.x
             });
-        }, 750);
+        }, 250);
         return app;
     }
 

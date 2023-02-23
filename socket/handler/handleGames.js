@@ -149,8 +149,8 @@ const gameStart = async function (code, mode) {
             p.cy = 1;
 
             //this is current viewport position
-            p.newx = 0;
-            p.newy = 0;
+            p.newx = 350;
+            p.newy = 350;
 
             //old viewport position
             p.oldx = 0;
