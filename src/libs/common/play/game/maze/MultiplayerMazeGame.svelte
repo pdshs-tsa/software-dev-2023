@@ -14,6 +14,9 @@
     //how thick the walls are, 20 is a good number
     const wallThickness = 20;
 
+    //ticker for sending positional data
+    let moveTick;
+
     //containers
     let wallsContainer;
     let backgroundContainer;
@@ -76,38 +79,75 @@
     });
 
     //TODO: make a time based tick system, to avoid laggy player frame rates
-    socket.on('maze:tick', (players) => {
+    socket.on('maze:tick', (player) => {
+        console.log('recieved');
         if (entityContainer === undefined) return;
-        players = JSON.parse(players);
-        entityContainer.removeChildren();
-        const visible = players.filter((p) => p.cx === currentCell.x && p.cy === currentCell.y && p.id !== socket.id);
-        visible.forEach((p) => {
-            let sprite = PIXI.Sprite.from('/maze/entity.png');
-            sprite.anchor.set(0.5);
-
-            sprite.x = p.x;
-            sprite.y = p.y;
-            sprite.angle = p.angle;
-
-            if (p.scale < 0){
-                sprite.scale.x *= -1;
+        player = JSON.parse(player);
+        if (player.cx !== currentCell.x || player.cy !== currentCell.y || player.id === socket.id) {
+            let index = entityContainer.children.findIndex((p) => p.name === player.id);
+            if (index !== -1) {
+                entityContainer.removeChildAt(index);
+            }
+            index = entityContainer.children.findIndex((p) => p.name === player.id + 'tag');
+            if (index !== -1) {
+                entityContainer.removeChildAt(index);
             }
 
-            let nametag = new PIXI.Text(`${p.username}`, {
-                fontFamily: 'Courier New',
-                fontWeight: "bolder",
-                fontSize: 15,
-                fill: 0x000000,
-                align: "left"
-            });
+            return;
+        }
 
-            nametag.anchor.set(0.5);
-            nametag.x = p.x;
-            nametag.y = p.y - sprite.height * 0.5;
+        let index = entityContainer.children.findIndex((p) => p.name === player.id);
+        if (index !== -1) {
+            entityContainer.removeChildAt(index);
+        }
+        index = entityContainer.children.findIndex((p) => p.name === player.id + 'tag');
+        if (index !== -1) {
+            entityContainer.removeChildAt(index);
+        }
 
-            entityContainer.addChild(sprite);
-            entityContainer.addChild(nametag);
+        let sprite = PIXI.Sprite.from('/maze/entity.png');
+        sprite.anchor.set(0.5);
+
+        sprite.name = player.id;
+        sprite.x = player.oldx;
+        sprite.y = player.oldy;
+        sprite.angle = player.angle;
+
+        if (player.scale < 0){
+            sprite.scale.x *= -1;
+        }
+
+        let nametag = new PIXI.Text(`${player.username}`, {
+            fontFamily: 'Courier New',
+            fontWeight: "bolder",
+            fontSize: 15,
+            fill: 0x000000,
+            align: "left"
         });
+
+        nametag.name = player.id + 'tag';
+        nametag.anchor.set(0.5);
+        nametag.x = sprite.x;
+        nametag.y = sprite.y - sprite.height * 0.65;
+
+        entityContainer.addChild(nametag);
+        entityContainer.addChild(sprite);
+
+        //calculate movement
+        const xdist = player.newx - player.oldx;
+        const ydist = player.newy - player.oldy;
+        const framesNeeded = Math.ceil((player.movetimestamp - player.cachedmovetimestamp) / 16.7);
+        const xperframe = xdist / framesNeeded;
+        const yperframe = ydist / framesNeeded;
+        let iterations;
+        let interval = setInterval(async () => {
+            if (iterations >= framesNeeded || !socket.connected) clearInterval(interval);
+            sprite.x += xperframe;
+            sprite.y += yperframe;
+
+            nametag.x += xperframe;
+            nametag.y += yperframe;
+        }, 16.7)
     });
 
     socket.on('ack:maze:answer', (s) => {
@@ -140,6 +180,7 @@
         app.destroy(false, {
             children: true,
         });
+        clearInterval(moveTick);
         socket.disconnect();
     });
 
@@ -377,6 +418,15 @@
         state = play;
         app.ticker.maxFPS = 60;
         app.ticker.add((delta) => state(delta));
+
+        moveTick = setInterval(() => {
+            socket.emit('maze:tick', gameCode, {
+                x: player.x,
+                y: player.y,
+                angle: player.angle,
+                scale: player.scale.x
+            });
+        }, 250);
         return app;
     }
 
@@ -451,13 +501,6 @@
             }
             socket.emit('maze:move', gameCode, currentCell)
         }
-
-        socket.emit('maze:tick', gameCode, {
-            x: player.x,
-            y: player.y,
-            angle: player.angle,
-            scale: player.scale.x
-        });
     }
 
     function playerTouchingSpecificWall(leftBound, rightBound, upBound, downBound) {
