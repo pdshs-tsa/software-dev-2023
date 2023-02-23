@@ -37,6 +37,7 @@
                 <ul style="margin: 20px;">
                     <li>Answer questions to earn points</li>
                     <li>Questions are given when interacting with an object or moving rooms</li>
+                    <li>Move rooms by going to the edge of the screen not blocked by a wall</li>
                     <li>Some objects are rarer than others; interact with rarer objects to gain more points</li>
                     <li>Reach the bottom right corner to gain a point bonus!</li>
                 </ul>
