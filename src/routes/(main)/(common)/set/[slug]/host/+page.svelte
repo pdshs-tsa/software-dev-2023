@@ -66,7 +66,7 @@
 <div class="background">
     <div class="box title">
         <h1 style="margin: auto;">Code: {code}</h1>
-        {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to {window.location.href.split('/set')[0] + '/play'} to join</h6>{/if}
+        {#if typeof window !== "undefined"}<h6 style="padding: 0; margin: 0">Go to <b>{window.location.hostname.split('/set')[0] + '/play'}</b> to join</h6>{/if}
         {#if !started}<button on:click={() => showSelection = true}>Start game</button>{/if}
     </div>
 
