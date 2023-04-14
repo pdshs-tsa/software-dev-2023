@@ -6,8 +6,13 @@
 		<link rel="icon" href="/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		%sveltekit.head%
+		<style>
+			.content {
+				display: contents;
+			}
+		</style>
 	</head>
 	<body>
-		<div style="display: contents">%sveltekit.body%</div>
+		<div class="content" style="">%sveltekit.body%</div>
 	</body>
 </html>

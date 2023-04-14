@@ -11,6 +11,7 @@
 </script>
 
 <div id="page">
+    <div id="break"></div>
     {#if type === "Teacher"}
         <TeacherHeader />
     {:else if type === "Student"}
@@ -35,6 +36,13 @@
 
     #page {
         max-height: 10%;
+        margin: 0;
+    }
+
+    #break {
+        height: 70px;
+        width: 100%;
+        padding: 0;
         margin: 0;
     }
 </style>

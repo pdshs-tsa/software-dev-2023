@@ -25,6 +25,7 @@
 <style>
     .body {
         display: block;
+        margin-top: 10vh;
     }
 
     .info {

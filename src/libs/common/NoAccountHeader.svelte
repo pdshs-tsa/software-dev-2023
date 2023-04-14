@@ -1,31 +1,93 @@
 <script>
-    import MenuButton from "./MenuButton.svelte";
+    import { goto } from "$app/navigation";
+
+    let query = "";
+
+    const search = () => {
+        goto("/search?q=" + query.replaceAll(" ", "_"));
+    }
 </script>
 
-<header>
+<div class="navbar">
+    <img src="/maze/player.png" alt="Logo" class="image" width="70" on:click={() => goto("/")} on:keypress={() => goto("/")}/>
     <div class="buttons">
-        <MenuButton text="Home" endpoint="/"/>
-        <MenuButton text="Play" endpoint="/play"/>
-        <MenuButton text="Search" endpoint="/search" />
+        <div style="display: flex; flex-direction: row; gap: 10px; align-content: center">
+            <input type="text" class="search" bind:value={query} placeholder="Search" on:keypress={(e) => {
+           if (e.key === "Enter") search();
+        }}>
+            <img class="glass"
+                 src="https://raw.githubusercontent.com/google/material-design-icons/master/png/action/search/materialicons/48dp/1x/baseline_search_black_48dp.png"
+                 alt="Search"
+                 on:click={() => search()}
+                 on:keypress={() => search()}/>
+        </div>
+        <div style="display: inline-flex; gap: 20px; justify-content: center; align-content: center">
+            <a href="/search" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Explore Sets</a>
+            <a href="/create-account" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Create Account</a>
+            <a href="/login" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Log In</a>
+        </div>
     </div>
-    <div class="buttons">
-        <MenuButton text="Login" endpoint="/login" />
-    </div>
-</header>
+</div>
 
 <style>
     .buttons {
         display: inline-flex;
+        gap: 40px;
     }
 
-    header {
-        background-color: #98c1d9;
-        color: white;
-        width: 100%;
-        margin: 0;
-        border: 0;
-        padding: 0;
+    .navbar {
+        position: fixed;
+        top: 0;
+        backdrop-filter: blur(6px);
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 70px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0 8px 24px;
+        padding: 0 30px 0 30px;
+        z-index: 999999;
+    }
+
+    .image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .image:hover {
+        cursor: pointer;
+    }
+
+    .search {
+        border: 0;
+        border-bottom: 1px solid black;
+        border-radius: 0;
+        line-height: 0;
+        margin: 0;
+        padding-bottom: 0;
+        padding-left: 20px;
+        width: 25vw;
+        color: black;
+    }
+
+    .search::placeholder {
+        color: black;
+    }
+
+    .glass {
+        max-width: 30px;
+        max-height: 30px;
+        margin: auto;
+    }
+
+    .glass:hover {
+        cursor: pointer;
+    }
+
+    a {
+        font-weight: bolder;
+        font-size: large;
+        color: black;
     }
 </style>
