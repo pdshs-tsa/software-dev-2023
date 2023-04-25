@@ -175,6 +175,7 @@ class Database {
 
         //TODO: reduce this to one array pass
         const trimmedarr = arr.filter(obj => {
+            if (obj.value.title.toLowerCase().includes(query.toLowerCase())) return true;
             const value = compareTwoStrings(obj.value.title.toLowerCase(), query);
             return value > 0.65;
         });
@@ -183,6 +184,9 @@ class Database {
         return trimmedarr.sort((a, b) => {
             const avalue = compareTwoStrings(a.value.title.toLowerCase(), query);
             const bvalue = compareTwoStrings(b.value.title.toLowerCase(), query);
+
+            if (a.value.title.toLowerCase().includes(query.toLowerCase()) && !b.value.title.toLowerCase().includes(query.toLowerCase())) return -1;
+            if (b.value.title.toLowerCase().includes(query.toLowerCase()) && !a.value.title.toLowerCase().includes(query.toLowerCase())) return 1;
 
             if (avalue > bvalue) {
                 return -1;
