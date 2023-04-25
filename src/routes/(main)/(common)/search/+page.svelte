@@ -4,7 +4,7 @@
     import SetOverviewCard from "../../../../libs/common/SetOverviewCard.svelte";
     $: arr = $page.data.arr;
 
-    let q = '';
+    let q = ($page.data.q == null) ? '' : $page.data.q;
 
     function search(){
         goto('/search?q=' + q.replaceAll(" ", "_"));

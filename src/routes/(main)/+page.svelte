@@ -1,11 +1,18 @@
 <script>
     import { name } from "/src/properties.json";
     import {hostname} from "../../libs/common/stores.js";
+    import { goto } from "$app/navigation";
     import {onMount} from "svelte";
+
+    let code = "";
 
     onMount(() => {
         hostname.set(window.location.host);
     });
+
+    const join = () => {
+        goto("/play?code=" + code);
+    }
 </script>
 
 <img class="image" src="https://4kwallpapers.com/images/wallpapers/windows-11-landscape-scenery-sunrise-stock-day-light-3840x2160-5661.jpg" alt="wall"/>
@@ -13,13 +20,19 @@
 <div class="title">
     <h1>ProFishInSea</h1>
     <div style="display: flex; align-content: center">
-        <input type="text" class="search" placeholder="Join a game">
-        <img
-            src="https://github.com/google/material-design-icons/blob/master/png/action/arrow_circle_right/materialicons/48dp/1x/baseline_arrow_circle_right_black_48dp.png?raw=true"
-            alt="Go"
-            class="join"
-            width="30px"
-        />
+        <input type="text" class="search" placeholder="Join a game" bind:value={code} on:keypress={(e) => {
+            if (e.key === "Enter") join()
+        }}>
+        <button
+            style="background-color: transparent; border: 0; width: fit-content; height: fit-content"
+            on:click={join}>
+            <img
+                src="https://github.com/google/material-design-icons/blob/master/png/action/arrow_circle_right/materialicons/48dp/1x/baseline_arrow_circle_right_black_48dp.png?raw=true"
+                alt="Go"
+                class="join"
+                width="30px"
+            />
+        </button>
     </div>
 </div>
 

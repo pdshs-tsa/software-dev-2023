@@ -18,6 +18,8 @@
     function submitGame() {
         socket.emit('prejoin', code);
     }
+
+    if (code !== '') submitGame();
 </script>
 
 <div class="background">

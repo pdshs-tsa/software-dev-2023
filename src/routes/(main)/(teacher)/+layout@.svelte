@@ -7,6 +7,7 @@
 </script>
 
 <div id="page">
+    <div id="break"></div>
     <TeacherHeader />
 
     <div id="content">
@@ -25,6 +26,13 @@
 
     #page {
         max-height: 10%;
+        margin: 0;
+    }
+
+    #break {
+        height: 70px;
+        width: 100%;
+        padding: 0;
         margin: 0;
     }
 </style>

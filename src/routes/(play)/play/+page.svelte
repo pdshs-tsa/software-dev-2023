@@ -3,6 +3,7 @@
     import JoinGame from "../../../libs/common/play/JoinGame.svelte";
     import WaitingGame from "../../../libs/common/play/WaitingGame.svelte";
     import {socket} from "../../../libs/common/socket/socket.js";
+    import { page } from '$app/stores'
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
     import {hostname} from "../../../libs/common/stores.js";
@@ -14,7 +15,7 @@
         }
     });
 
-    let gamecode = '';
+    let gamecode = ($page.data.code == null) ? '' : $page.data.code;
     let username = '';
     let gameData = 0;
 
