@@ -80,7 +80,6 @@
 
     //TODO: make a time based tick system, to avoid laggy player frame rates
     socket.on('maze:tick', (player) => {
-        console.log('recieved');
         if (entityContainer === undefined) return;
         player = JSON.parse(player);
         if (player.cx !== currentCell.x || player.cy !== currentCell.y || player.id === socket.id) {
