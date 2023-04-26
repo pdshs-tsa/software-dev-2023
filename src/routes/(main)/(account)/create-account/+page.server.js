@@ -12,13 +12,11 @@ export const actions = {
         const verifypassword = data.get('verify-password');
         const accounttype = data.get('account-type');
         let classcode = '';
-        let classpassword = '';
 
         if (username)
 
         if (accounttype === "Student"){
             classcode = data.get('class-code');
-            classpassword = data.get('class-pass');
         }
 
         if (!isAlphaNumeric(username)) return invalid(400, {invalidUsername: true});
@@ -30,7 +28,7 @@ export const actions = {
         if (password !== verifypassword) return invalid(400, {notMatchingPasswords: true});
         if (!accounttype) return invalid(400, {missingAccountType: true});
         if (accounttype === 'Student' && (classcode === '' || classcode == null)) return invalid(400, {accounttype: accounttype, missingClassCode: true});
-        if (accounttype === 'Student' && !await database.verifyClassPassword(classcode, classpassword)) return invalid(400, {accounttype: accounttype, incorrectClassPass: true});
+        if (accounttype === 'Student' && !await database.verifyClassPassword(classcode)) return invalid(400, {accounttype: accounttype, incorrectClassPass: true});
 
         const hash = await argon2.hash(password);
 
@@ -39,7 +37,7 @@ export const actions = {
             hash: hash,
             accounttype: accounttype,
             timestamp: Date.now(),
-            class: classcode,
+            class: (classcode === '') ? [] : [classcode],
             sets: [],
             uuid: uuidv4()
         };

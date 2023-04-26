@@ -23,7 +23,7 @@
         </div>
         <div style="display: inline-flex; gap: 20px; justify-content: center; align-content: center">
             <a href="/create" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Create Set</a>
-            <a href="/class" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Your Class</a>
+            <a href="/class" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Your Classes</a>
             <a href="/logout" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Log Out</a>
         </div>
     </div>

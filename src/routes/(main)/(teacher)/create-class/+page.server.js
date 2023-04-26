@@ -7,14 +7,14 @@ export const actions = {
         const sessionid = cookies.get('sessionid');
         const user = await database.getUserFromSession(sessionid);
         const formData = await request.formData();
-        const classPassword = await formData.get('password');
+        const className = await formData.get('name');
 
         let random = 0;
         while (random === 0){
             random = Math.random();
         }
 
-        const code = await database.createClass(user, classPassword);
+        const code = await database.createClass(user, className);
         throw redirect(303, `/class/${code}`);
     }
 }

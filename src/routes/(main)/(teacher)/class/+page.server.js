@@ -1,15 +1,17 @@
 import database from "../../../../../database.js";
-import {redirect} from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ cookies }) {
     const sessionid = cookies.get('sessionid');
     const user = await database.getUserFromSession(sessionid);
-    const classData = await database.getClassFromCode(user.class);
+    const classList = await database.getClassesFromUsername(user.username);
 
-    if (classData == null) {
-        throw redirect(303, '/create-class');
-    } else {
-        throw redirect(303, `/class/${classData.code}`);
-    }
+
+    return {classes: classList.sort((e, f) => {
+            if (e.students.length > f.students.length) {
+                return -1;
+            } else{
+                return 1;
+            }
+    })};
 }

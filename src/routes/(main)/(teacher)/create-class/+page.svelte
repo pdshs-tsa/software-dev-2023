@@ -6,8 +6,8 @@
 <div class="body">
     <h2>Create a new class</h2>
     <form method="POST">
-        <p style="font-size: medium">The class password is what your students will use to join the class, along with the generated class code</p>
-        <input name="password" class="info" type="text" placeholder="Class Password">
+        <p style="font-size: medium; margin: 10px; text-align: center">The class name helps you organize the classes you create</p>
+        <input name="name" class="info" type="text" placeholder="Class Name">
         <button type="submit" class="action-button">Create</button>
     </form>
 </div>
@@ -26,7 +26,7 @@
         color: black;
         font-size: x-large;
         text-align: center;
-        width: 50%;
+        width: 30vw;
         background: white;
         display: block;
         margin: auto auto 10px;

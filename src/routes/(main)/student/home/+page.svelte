@@ -1,26 +1,23 @@
 <script>
     import {page} from "$app/stores";
     import AssignedSet from "../../../../libs/student/AssignedSet.svelte";
+    import ClassOverview from "../../../../libs/common/ClassOverview.svelte";
     const user = $page.data.user;
-    const classdata = $page.data.class;
+    const classLists = $page.data.class;
 </script>
 
 <div class="body">
     <div class="infobox">
         <div class="info">
-            <h4 style="text-align: center;">Your Stats</h4>
-            <p>
-                Total sets done: {classdata.stats.total}<br>
-                Total questions answered: {classdata.stats.completed}<br>
-                Total correct questions: {classdata.stats.correct} ({classdata.stats.correct / classdata.stats.completed}%)
-            </p>
+            <h4 style="text-align: center;">Your Classes</h4>
+            <hr>
+            {#each classLists as clazz}
+                <ClassOverview classData={clazz}/>
+            {/each}
         </div>
     </div>
     <div class="assigned">
         <h4 style="text-align: center">Assigned Sets</h4>
-        {#each classdata.scores as set}
-            <AssignedSet assigned="{set}" />
-        {/each}
     </div>
 </div>
 
@@ -55,5 +52,9 @@
 
     h4 {
         margin: 0;
+    }
+
+    hr {
+        border: 1px solid lightgrey;
     }
 </style>

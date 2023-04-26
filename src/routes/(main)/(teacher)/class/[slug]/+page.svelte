@@ -11,8 +11,8 @@
 <div class="body">
     <div class="infobox">
         <div class="info">
+            <p><strong>{classdata.name}</strong></p>
             <p>Your class code is <strong>{classdata.code}</strong></p>
-            <p>Your class password is <strong>{classdata.password}</strong></p>
         </div>
 
         <div class="info">

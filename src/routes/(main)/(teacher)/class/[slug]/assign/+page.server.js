@@ -5,7 +5,7 @@ import {error, redirect} from "@sveltejs/kit";
 export async function load({ params, cookies, url }) {
     const sessionid = cookies.get('sessionid');
     const user = await database.getUserFromSession(sessionid);
-    const classData = await database.getClassFromCode(user.class);
+    const classData = await database.getClassFromCode(params.slug);
 
     const set = url.searchParams.get('set');
     if (set != null){
@@ -19,7 +19,7 @@ export async function load({ params, cookies, url }) {
         arr = await database.searchSets(q)
     }
 
-    if (!(user.class === classData.code)){
+    if (!(user.class.includes(classData.code))){
         throw new error(403, "You're not allowed to view this home.");
     }
 

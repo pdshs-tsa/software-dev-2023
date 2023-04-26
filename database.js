@@ -216,10 +216,10 @@ class Database {
      * @param {string} username the username
      * @returns {Promise<unknown>} null if the home isn't found
      */
-    async getClassFromUsername(username) {
+    async getClassesFromUsername(username) {
         const user = await users.get(username);
-        const code = user.class;
-        return this.getClassFromCode(code);
+        let code = user.class;
+        return await Promise.all(code.map(async (e) => await this.getClassFromCode(e)));
     }
 
     async getClassFromCode(code){
@@ -229,40 +229,37 @@ class Database {
         return await classes.get(code);
     }
 
-    async createClass(user, password) {
-        const classPassword = password;
-
+    async createClass(user, name) {
         //generate unique alphanumeric code
         let random = 0;
         let code = '';
         while (random === 0 && !(await classes.has(code))) {
             random = Math.random();
-            code = random.toString(36).slice(2, 7)
+            code = random.toString(36).slice(2, 8)
         }
 
         const data = {
             owner: user.username,
-            password: classPassword,
+            name: name,
             code: code,
             assigned: [],
             students: []
         }
 
         await classes.set(code, data);
-        await users.set(`${user.username}.class`, code);
+        await users.push(`${user.username}.class`, code);
         return code;
     }
 
     /**
      * Checks if a password for a home code is correct
      * @param {string} code home to check
-     * @param {string} password password to check
      * @return {Promise<boolean>} if the password is correct
      */
-    async verifyClassPassword(code, password){
+    async verifyClassPassword(code){
         const classData = await this.getClassFromCode(code);
         if (classData === null) return false;
-        return classData.password === password;
+        return classData.code === code;
     }
 
     /**
