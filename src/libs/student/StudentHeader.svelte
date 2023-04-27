@@ -22,7 +22,8 @@
                  on:keypress={() => search()}/>
         </div>
         <div style="display: inline-flex; gap: 20px; justify-content: center; align-content: center">
-            <a href="/logout" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Log Out</a>
+            <a href="/student/join-class" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Add another class</a>
+            <a href="/student/logout" style="display: flex; flex-direction: column; justify-content: center; text-align: center">Log Out</a>
         </div>
     </div>
 </div>

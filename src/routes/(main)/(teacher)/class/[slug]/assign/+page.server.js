@@ -9,7 +9,8 @@ export async function load({ params, cookies, url }) {
 
     const set = url.searchParams.get('set');
     if (set != null){
-        await database.assignSet(user.class, set);
+        const setdata = await database.getSet(set);
+        await database.assignSet(user.class, setdata.name, set);
         throw redirect(303, `/class/${user.class}`);
     }
 

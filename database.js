@@ -271,39 +271,48 @@ class Database {
     async addStudentToClass(username, code) {
         const data = {
             username: username,
-            scores: [],
-            stats: {
-                total: 0,
-                correct: 0,
-                completed: 0
-            }
+            assignments: []
         }
         await classes.push(`${code}.students`, data);
+        await users.push(`${username}.class`, code);
     }
 
     /**
      * Assigns a set to the given home
      * @param {string} classcode the home code to assign the set to
+     * @param name {string} the name of the set
      * @param {string} uuid the uuid of the set
      */
-    async assignSet(classcode, uuid){
+    async assignSet(classcode, name, uuid){
         const current = await classes.get(`${classcode}.assigned`);
         if (current.includes(uuid)) return;
         await classes.push(`${classcode}.assigned`, uuid);
-        const set = await sets.get(uuid);
         const studentData = await classes.get(`${classcode}.students`);
         if (!(studentData instanceof Array)) throw new error(500, "Could not assign sets to all students.");
         studentData.map((student) => {
-            student.scores.push({
+            student.assignments.push({
+                name: name,
                 uuid: uuid,
-                name: set.title,
-                correct: 0,
-                total: 0,
-                started: false
+                attempts: []
             })
             return student;
         });
         await classes.set(`${classcode}.students`, studentData);
+    }
+
+    async addAssignmentAttempt(student, clazz, uuid, score) {
+        const studentClass = await this.getClassFromCode(clazz);
+        const index = studentClass.students.findIndex((e) => e.username === student);
+        let studentData = studentClass.students[index];
+        studentData.assignments.map((e) => {
+            if (e.uuid === uuid) {
+                e.attempts.push(score);
+                return e;
+            } else {
+                return e;
+            }
+        });
+        await classes.set(clazz, studentClass);
     }
 
     async fetchSetTable() {

@@ -3,13 +3,11 @@
 
     export let data = {
         username: '',
-        scores: [
+        assignments: [
             {
-                uuid: '0',
                 name: '',
-                correct: 0,
-                total: 0,
-                started: false
+                uuid: '',
+                attempts: []
             }
         ]
     }
@@ -32,7 +30,7 @@
         <div class="scores" transition:slide|local>
             <ul>
                 {#each data.scores as scoreData}
-                    <li><a href={`/set/${scoreData.uuid}`}>{scoreData.name}</a>: {#if scoreData.started}{Math.round((scoreData.correct / scoreData.total) * 100)}%{:else}Not started{/if}</li>
+                    <li><a href={`/set/${scoreData.uuid}`}>{scoreData.name}</a></li>
                 {/each}
             </ul>
         </div>

@@ -37,7 +37,7 @@ export const actions = {
             hash: hash,
             accounttype: accounttype,
             timestamp: Date.now(),
-            class: (classcode === '') ? [] : [classcode],
+            class: [],
             sets: [],
             uuid: uuidv4()
         };
