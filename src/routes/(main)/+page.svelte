@@ -15,10 +15,9 @@
     }
 </script>
 
-<img class="image" src="https://4kwallpapers.com/images/wallpapers/windows-11-landscape-scenery-sunrise-stock-day-light-3840x2160-5661.jpg" alt="wall"/>
-
+<div class="background"></div>
 <div class="title">
-    <h1>ProFishInSea</h1>
+    <h1 style="color: black; font-size: 4em">ProFishInSea</h1>
     <div style="display: flex; align-content: center">
         <input type="text" class="search" placeholder="Join a game" bind:value={code} on:keypress={(e) => {
             if (e.key === "Enter") join()
@@ -52,7 +51,9 @@
 </div>
 
 <style>
-    .image {
+    .background {
+        background-image: url("/underwater.jpg");
+        background-size: cover;
         position: absolute;
         object-fit: cover;
         height: 80vh;
@@ -106,11 +107,12 @@
         padding-left: 15px;
         width: 15vw;
         color: black;
-        font-size: x-large;
+        font-size: 1.5em;
     }
 
     .search::placeholder {
         color: black;
+        font-size: 1em;
     }
 
     .info-box {
