@@ -2,8 +2,10 @@
     import {page} from "$app/stores";
     import AssignedSet from "../../../../libs/student/AssignedSet.svelte";
     import ClassOverview from "../../../../libs/common/ClassOverview.svelte";
+    import AssignmentOverview from "../../../../libs/student/AssignmentOverview.svelte";
     const user = $page.data.user;
     const classLists = $page.data.class;
+    const assignments = $page.data.assignments;
 </script>
 
 <div class="body">
@@ -18,6 +20,13 @@
     </div>
     <div class="assigned">
         <h4 style="text-align: center">Assigned Sets</h4>
+        <div class="infobox">
+            <div class="info">
+                {#each assignments as i}
+                    <AssignmentOverview assignment={i} />
+                {/each}
+            </div>
+        </div>
     </div>
 </div>
 

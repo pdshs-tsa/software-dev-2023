@@ -3,7 +3,7 @@
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
-    let collapsed = false;
+    let collapsed = true;
     $: buttonText = (collapsed) ? "Show" : "Hide";
 
     export let data = {
@@ -21,6 +21,7 @@
             component: data
         });
     }
+
 </script>
 
 <div class="body">

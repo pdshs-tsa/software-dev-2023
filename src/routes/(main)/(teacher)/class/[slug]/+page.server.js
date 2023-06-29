@@ -12,10 +12,11 @@ export async function load({ params, cookies }) {
 
     const assigned = [];
     for (const data of classData.assigned){
-        const set = await database.getSet(data);
+        const set = await database.getSet(data.uuid);
         assigned.push({
             uuid: data,
-            set: set
+            set: set,
+            attempts: await database.getStudentAttempts(classData.code, data)
         });
     }
 

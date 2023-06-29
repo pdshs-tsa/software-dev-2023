@@ -273,6 +273,14 @@ class Database {
             username: username,
             assignments: []
         }
+        for (const i of await classes.get(`${code}.assigned`)) {
+            data.assignments.push({
+                name: i.name,
+                uuid: i.uuid,
+                attempts: [],
+                best: 0.0
+            });
+        }
         await classes.push(`${code}.students`, data);
         await users.push(`${username}.class`, code);
     }
@@ -286,14 +294,18 @@ class Database {
     async assignSet(classcode, name, uuid){
         const current = await classes.get(`${classcode}.assigned`);
         if (current.includes(uuid)) return;
-        await classes.push(`${classcode}.assigned`, uuid);
+        await classes.push(`${classcode}.assigned`, {
+            name: name,
+            uuid: uuid,
+        });
         const studentData = await classes.get(`${classcode}.students`);
         if (!(studentData instanceof Array)) throw new error(500, "Could not assign sets to all students.");
         studentData.map((student) => {
             student.assignments.push({
                 name: name,
                 uuid: uuid,
-                attempts: []
+                attempts: [],
+                best: 0.0
             })
             return student;
         });
@@ -302,17 +314,56 @@ class Database {
 
     async addAssignmentAttempt(student, clazz, uuid, score) {
         const studentClass = await this.getClassFromCode(clazz);
+        if (studentClass === null) return;
         const index = studentClass.students.findIndex((e) => e.username === student);
         let studentData = studentClass.students[index];
         studentData.assignments.map((e) => {
             if (e.uuid === uuid) {
-                e.attempts.push(score);
+                e.attempts.push(score * 100);
+                if (score > e.best) {
+                    e.best = score * 100;
+                }
                 return e;
             } else {
                 return e;
             }
         });
         await classes.set(clazz, studentClass);
+    }
+
+    async getStudentAttempts(clazz, uuid) {
+        const theClass = await this.getClassFromCode(clazz);
+        let arr = [];
+        for (const i of theClass.students) {
+            for (const assignment of i.assignments) {
+                if (assignment.uuid === uuid.uuid) {
+                    arr.push({
+                        student: i.username,
+                        data: assignment
+                    });
+                    break;
+                }
+            }
+        }
+
+        return arr;
+    }
+
+    async getStudentAssignedSets(student, codeList) {
+        let assignments = [];
+        for (const i of codeList) {
+            const studentClass = await this.getClassFromCode(i);
+            const index = studentClass.students.findIndex((e) => e.username === student);
+            let studentData = studentClass.students[index];
+            for (const j of studentData.assignments) {
+                assignments.push({
+                    class: studentClass.name,
+                    code: studentClass.code,
+                    data: j
+                });
+            }
+        }
+        return assignments;
     }
 
     async fetchSetTable() {

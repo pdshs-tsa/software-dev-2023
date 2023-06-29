@@ -2,6 +2,7 @@
     import {page} from '$app/stores';
     import StudentOverview from "../../../../../libs/teacher/StudentOverview.svelte";
     import {goto} from "$app/navigation";
+    import AssignedOverview from "../../../../../libs/teacher/AssignedOverview.svelte";
 
     const classdata = $page.data.data;
     const asssigned = $page.data.assigned
@@ -17,19 +18,18 @@
 
         <div class="info">
             <p>Assigned Sets</p>
-            <ul>
-                {#if asssigned != null}
-                    {#each asssigned as setdata}
-                        <li><a href={`/set/${setdata.uuid}`}>{setdata.set.title}</a></li>
-                    {/each}
-                {/if}
-            </ul>
-
+            <hr>
+            {#if asssigned != null}
+                {#each asssigned as setdata}
+                    <AssignedOverview assignment={setdata} />
+                {/each}
+            {/if}
+            <hr>
             <button on:click={async () => await goto(`/class/${classdata.code}/assign`)}>Assign new</button>
         </div>
     </div>
     <div class="students">
-        <h4 style="text-align: center">Student Data</h4>
+        <h3 style="text-align: center; margin-bottom: 0">Class List</h3>
         {#each classdata.students as student}
             <StudentOverview data="{student}" />
         {/each}
@@ -63,9 +63,5 @@
         text-align: center;
         font-size: x-large;
         margin: auto
-    }
-
-    h4 {
-        margin: 0;
     }
 </style>

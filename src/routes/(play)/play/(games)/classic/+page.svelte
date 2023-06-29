@@ -6,6 +6,8 @@
 
     const set = $page.data.set;
     const isLive = $page.data.live;
+    const isHomework = $page.data.homework;
+    const classCode = $page.data.class;
     const user = $page.data.user;
     let setIndex = 0;
     let numCorrect = 0;
@@ -45,8 +47,13 @@
             socket.emit('classic:answer', $page.data.code, chosen === correct, time);
         }
         if (setIndex + 1 >= set.data.length) {
+            if (isHomework) {
+                let resp = await fetch(`${window.location.origin}/play/api/game_end?class=${classCode}&username=${user.username}&set=${set.uuid}&score=${numCorrect / set.data.length}`);
+                await goto(`/home`);
+                return;
+            }
+            if (isLive) socket.disconnect();
             await goto(`/play`);
-            socket.disconnect();
             return;
         }
         time = Date.now();

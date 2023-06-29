@@ -15,9 +15,20 @@ export async function load({ cookies }) {
     }
 
     const classList = await database.getClassesFromUsername(user.username);
+    const assignmentList = await database.getStudentAssignedSets(user.username, user.class);
+
+    assignmentList.map(async (e) => {
+        e.set = await database.getSet(e.data.uuid);
+    })
+
+    assignmentList.sort((a, b) => {
+        if (a.class > b.class) return 1;
+        return -1;
+    })
 
     return {
         user: user,
-        class: classList
+        class: classList,
+        assignments: assignmentList
     }
 }

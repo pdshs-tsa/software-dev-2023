@@ -9,9 +9,15 @@
 <h2>Your sets</h2>
 
 <div class="setbox">
-    {#each sets as set}
-        <SetOverviewCard data="{set}" />
-    {/each}
+    {#if sets.length === 0}
+        <div style="width: auto; height: auto; display: flex; flex-direction: column; justify-content: center; align-content: center; padding: 1em">
+            <p style="color: gray"><i>It's empty...</i></p>
+        </div>
+    {:else}
+        {#each sets as set}
+            <SetOverviewCard data="{set}" />
+        {/each}
+    {/if}
 </div>
 
 <hr>
