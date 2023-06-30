@@ -1,4 +1,4 @@
-import {invalid, redirect} from "@sveltejs/kit";
+import {fail, redirect} from "@sveltejs/kit";
 import * as argon2 from "argon2";
 import database from "/database.js";
 import {v4 as uuidv4} from 'uuid';
@@ -19,16 +19,16 @@ export const actions = {
             classcode = data.get('class-code');
         }
 
-        if (!isAlphaNumeric(username)) return invalid(400, {invalidUsername: true});
+        if (!isAlphaNumeric(username)) return fail(400, {invalidUsername: true});
 
-        if (await database.checkIfUserExists(username)) return invalid(400, {takenUsername: true});
+        if (await database.checkIfUserExists(username)) return fail(400, {takenUsername: true});
 
-        if (!username) return invalid(400, {missingUsername: true});
-        if (!password) return invalid(400, {missingPassword: true});
-        if (password !== verifypassword) return invalid(400, {notMatchingPasswords: true});
-        if (!accounttype) return invalid(400, {missingAccountType: true});
-        if (accounttype === 'Student' && (classcode === '' || classcode == null)) return invalid(400, {accounttype: accounttype, missingClassCode: true});
-        if (accounttype === 'Student' && !await database.verifyClassPassword(classcode)) return invalid(400, {accounttype: accounttype, incorrectClassPass: true});
+        if (!username) return fail(400, {missingUsername: true});
+        if (!password) return fail(400, {missingPassword: true});
+        if (password !== verifypassword) return fail(400, {notMatchingPasswords: true});
+        if (!accounttype) return fail(400, {missingAccountType: true});
+        if (accounttype === 'Student' && (classcode === '' || classcode == null)) return fail(400, {accounttype: accounttype, missingClassCode: true});
+        if (accounttype === 'Student' && !await database.verifyClassPassword(classcode)) return fail(400, {accounttype: accounttype, incorrectClassPass: true});
 
         const hash = await argon2.hash(password);
 

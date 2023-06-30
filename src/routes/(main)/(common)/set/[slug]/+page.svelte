@@ -58,7 +58,8 @@
         display: table-cell;
         overflow: auto;
         position: absolute;
-        min-width: 60vw;
+        min-width: 64vw;
+        max-width: 64vw;
         height: 80%;
         border-left: 20px solid transparent;
     }

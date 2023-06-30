@@ -12,6 +12,28 @@
         correct: ''
     }
 
+    $: {
+        if (data.correct === '') {
+            let count = 0;
+            for (const answer of data.answers) {
+                if (answer !== '') count++
+            }
+            if (count === 1) {
+                for (const answer of data.answers) {
+                    if (answer !== '') {
+                        data.correct = answer;
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (const answer of data.answers) {
+                if (answer === null || answer === '' || answer === undefined) continue;
+                if (answer.startsWith(data.correct) || answer.startsWith(data.correct.substring(0, data.correct.length - 1))) data.correct = answer;
+            }
+        }
+    }
+
     function switchStatus(){
         collapsed = !collapsed;
     }
@@ -25,7 +47,7 @@
 </script>
 
 <div class="body">
-    <div style="display: flex">
+    <div style="display: flex;">
         <input type="text" bind:value={data.prompt} placeholder="Prompt" id="question">
         <button on:click={() => switchStatus()} class="button">{buttonText}</button>
         <button on:click={() => remove()} class="button">Remove</button>
@@ -55,7 +77,7 @@
 
         padding: 5px;
         margin: 10px;
-        width: 70%;
+        max-width: 70%;
     }
 
     .option {

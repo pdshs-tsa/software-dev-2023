@@ -50,12 +50,10 @@
     }
 
     async function handleSubmit(event){
-
         //init form data container
         let formData = new FormData(this);
 
         //check if everything is filled out
-
         valid = !(formData.get('name') === '' || formData.get('desc') === '');
         if (components.length < 1) valid = false;
         for (const i of components) {
@@ -111,16 +109,19 @@
     }
 
     function parseData() {
+        loading = false;
         const sets = loadingData.split(';;');
         for (const term of sets) {
             addComponent({prompt: term.split('[]')[0], answers: [term.split('[]')[1], '', '', ''], correct: term.split('[]')[1]})
         }
-        if (components.at(0).prompt === '' && components.at(0).correct === ''){
-            components.splice(0, 1);
-            components = components;
+        let copy = [];
+        for (const element of components) {
+            if (element.prompt === undefined || element.prompt === '' || element.correct === undefined || element.correct === '') continue;
+            copy.push(element);
         }
-        loading = false;
+        components = copy;
         loadingData = '';
+        console.log(components);
     }
 </script>
 
@@ -152,7 +153,7 @@
 </div>
 
 {#if loading}
-    <div class="centered" style="max-width: 50%; max-height: 50%; overflow: auto; background: white; padding: 10px">
+    <div class="centered" style="box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 3px; max-width: 50%; max-height: 50%; overflow: auto; background: white; padding: 20px; border: 1px solid lightgray; ">
         <div style="display: flex; justify-content: space-between">
             <h2>Load from Quizlet</h2>
             <button style="width: fit-content; height: fit-content" on:click={() => loading = false}>Close</button>
@@ -161,11 +162,12 @@
         <textarea bind:value={loadingData}></textarea>
         <button on:click={parseData}>Load</button>
     </div>
+{:else}
+    <div></div>
 {/if}
 <style>
     .body{
         display: table;
-
         overflow: clip;
     }
 
@@ -178,7 +180,8 @@
         display: table-cell;
         overflow: auto;
         position: absolute;
-        min-width: 60vw;
+        min-width: 64vw;
+        max-width: 64vw;
         height: 80%;
         border-left: 20px solid transparent;
     }

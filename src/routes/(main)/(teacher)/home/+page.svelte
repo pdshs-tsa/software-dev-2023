@@ -1,26 +1,47 @@
 <script>
     import SetOverviewCard from "../../../../libs/common/SetOverviewCard.svelte";
     import { page } from '$app/stores'
+    import ClassOverviewCard from "../../../../libs/teacher/ClassOverviewCard.svelte";
 
     const user = $page.data.user;
+    const classes = $page.data.classes;
     const sets = $page.data.sets;
 </script>
 
-<h2>Your sets</h2>
+<div style="padding: 0 20px 20px;">
+    <h2>Your Sets</h2>
 
-<div class="setbox">
-    {#if sets.length === 0}
-        <div style="width: auto; height: auto; display: flex; flex-direction: column; justify-content: center; align-content: center; padding: 1em">
-            <p style="color: gray"><i>It's empty...</i></p>
-        </div>
-    {:else}
-        {#each sets as set}
-            <SetOverviewCard data="{set}" />
-        {/each}
-    {/if}
+    <div class="setbox">
+        {#if sets.length === 0}
+            <div style="width: auto; height: auto; display: flex; flex-direction: column; justify-content: center; align-content: center; padding: 1em">
+                <p style="color: gray"><i>Go to "create set" to start a new set.</i></p>
+            </div>
+        {:else}
+            {#each sets as set}
+                <SetOverviewCard data="{set}" />
+            {/each}
+        {/if}
+    </div>
+
+    <hr>
+
+    <h2>Your Classes</h2>
+
+    <div class="setbox">
+        {#if sets.length === 0}
+            <div style="width: auto; height: auto; display: flex; flex-direction: column; justify-content: center; align-content: center; padding: 1em">
+                <p style="color: gray"><i>Go to "my classes" to create a class.</i></p>
+            </div>
+        {:else}
+            {#each classes as classData}
+                <ClassOverviewCard data={classData} />
+            {/each}
+        {/if}
+    </div>
+
+    <hr>
+
 </div>
-
-<hr>
 
 <style>
     .setbox {

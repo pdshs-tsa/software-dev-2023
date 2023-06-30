@@ -16,7 +16,13 @@ export async function load({ cookies }) {
         return b.timestamp - a.timestamp;
     });
 
+    let classes = [];
+    for (const code of user.class) {
+        classes.push(await database.getClassFromCode(code));
+    }
+
     return {
-        sets: newsets
+        sets: newsets,
+        classes: classes
     }
 }

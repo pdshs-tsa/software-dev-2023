@@ -10,9 +10,8 @@
 
 <div class="body">
     <div class="infobox">
+        <h4 style="text-align: center;">Your Classes</h4>
         <div class="info">
-            <h4 style="text-align: center;">Your Classes</h4>
-            <hr>
             {#each classLists as clazz}
                 <ClassOverview classData={clazz}/>
             {/each}
@@ -51,6 +50,9 @@
         border: 1px solid lightgrey;
         padding: 10px;
         margin: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
     p{

@@ -233,10 +233,12 @@ class Database {
         //generate unique alphanumeric code
         let random = 0;
         let code = '';
-        while (random === 0 || !(await classes.has(code))) {
+        while (random === 0 && await classes.has(code)) {
             random = Math.random();
             code = random.toString(36).slice(2, 8)
         }
+
+        console.log(code);
 
         const data = {
             owner: user.username,
