@@ -38,14 +38,24 @@
 <div>
     <div class="content">
         <div class="box quick-links info-box">
-            <h1 class="box-title">Quick Links</h1>
+        <h1 class="box-title">Welcome to ProFishInSea!</h1>
             <hr>
-            <a href="/play">Play</a>
+            <strong>ProFishInSea</strong> is a study platform designed to be simple to use, effective for learning, and accessible. Teachers are able to create study sets and classes for students to use, who then play interactive learning games to reinforce knowledge retention.
+            <br><br>
+            Teachers can also host live games, which students can join and play with their peers in engaging, multiplayer games while learning content.
         </div>
 
         <div class="box other info-box">
-            <h1 class="box-title">Other Information</h1>
+            <h1 class="box-title">Reference Information</h1>
             <hr>
+
+            <ul>
+                <li>Background image from <a href="https://www.pexels.com/photo/white-jelly-fish-underwater-photography-2508555/">Pexels.com</a>.</li>
+                <li>All other assets created from scratch using Adobe Illustrator.</li>
+                <li>Website created using SvelteKit and Socket.IO.</li>
+                <li>Web server using Nginx.</li>
+                <li>All code is hosted locally on <a href="https://github.com/pdshs-tsa/software-dev-2023">GitHub</a>.</li>
+            </ul>
         </div>
     </div>
 </div>
