@@ -50,7 +50,7 @@
             {:else}
                 <ol>
                     {#each assignment.data.attempts as attempt}
-                        <li>{attempt}%</li>
+                        <li><strong>{attempt}%</strong></li>
                     {/each}
                 </ol>
             {/if}

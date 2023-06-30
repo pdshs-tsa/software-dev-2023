@@ -1,7 +1,10 @@
 <script>
     import {slide} from 'svelte/transition';
+    import {goto} from "$app/navigation";
 
     export let assignment;
+    export let classCode;
+
     let studentData = assignment.attempts;
 
     let averageBest = 0;
@@ -11,7 +14,7 @@
 
     averageBest /= studentData.length;
 
-    let buttonText = "Show";
+    let buttonText = "Show Report";
     let open = false;
 
     const switchStatus = () => {
@@ -21,12 +24,15 @@
 </script>
 
 <div class="body">
-    <div style="display: flex; justify-content: center; align-content: center">
+    <div style="display: flex; justify-content: space-between; align-content: center">
         <div style="display: flex; flex-direction: column; align-content: center; justify-content: center">
-            <a style="font-size: x-large" href="/set/{assignment.uuid}">{assignment.set.title}</a>
+            <a style="font-size: x-large" href="/set/{assignment.uuid.uuid}">{(assignment.set.title.length >= 33) ? assignment.set.title.substring(0, 33) + "..." : assignment.set.title}</a>
         </div>
 
-        <button on:click={switchStatus} class="button">{buttonText}</button>
+        <div style="display: flex">
+            <button on:click={() => goto(`/class/${classCode}/remove?set=${assignment.uuid.uuid}`)} class="button">Remove</button>
+            <button on:click={switchStatus} class="button">{buttonText}</button>
+        </div>
     </div>
 
     {#if open}
@@ -47,7 +53,7 @@
                             <td>
                                 <ol>
                                     {#each student.data.attempts as attempt}
-                                        <li>{attempt}</li>
+                                        <li><strong>{attempt}%</strong></li>
                                     {/each}
                                 </ol>
                             </td>

@@ -7,8 +7,6 @@ export async function GET({ url }) {
     const set = url.searchParams.get('set');
     const score = url.searchParams.get('score');
 
-    console.log(url);
-
     await database.addAssignmentAttempt(username, classCode, set, score);
 
     return new Response('');

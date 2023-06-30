@@ -138,7 +138,7 @@
         const framesNeeded = Math.ceil((player.movetimestamp - player.cachedmovetimestamp) / 16.7);
         const xperframe = xdist / framesNeeded;
         const yperframe = ydist / framesNeeded;
-        let iterations;
+        let iterations = 0;
         let interval = setInterval(async () => {
             if (iterations >= framesNeeded || !socket.connected) clearInterval(interval);
             sprite.x += xperframe;
@@ -146,6 +146,8 @@
 
             nametag.x += xperframe;
             nametag.y += yperframe;
+
+            iterations++;
         }, 16.7)
     });
 

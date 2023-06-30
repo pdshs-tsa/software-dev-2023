@@ -1,8 +1,9 @@
 <script>
     import {page} from '$app/stores';
     import StudentOverview from "../../../../../libs/teacher/StudentOverview.svelte";
-    import {goto} from "$app/navigation";
+    import {goto, invalidate} from "$app/navigation";
     import AssignedOverview from "../../../../../libs/teacher/AssignedOverview.svelte";
+    import {onMount} from "svelte";
 
     const classdata = $page.data.data;
     const asssigned = $page.data.assigned
@@ -21,7 +22,7 @@
             <hr>
             {#if asssigned != null}
                 {#each asssigned as setdata}
-                    <AssignedOverview assignment={setdata} />
+                    <AssignedOverview assignment={setdata} classCode={classdata.code}/>
                 {/each}
             {/if}
             <hr>

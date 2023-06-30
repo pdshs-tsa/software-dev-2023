@@ -233,7 +233,7 @@ class Database {
         //generate unique alphanumeric code
         let random = 0;
         let code = '';
-        while (random === 0 && !(await classes.has(code))) {
+        while (random === 0 || !(await classes.has(code))) {
             random = Math.random();
             code = random.toString(36).slice(2, 8)
         }
@@ -293,7 +293,7 @@ class Database {
      */
     async assignSet(classcode, name, uuid){
         const current = await classes.get(`${classcode}.assigned`);
-        if (current.includes(uuid)) return;
+        if (current.indexOf((e) => e.uuid === uuid) !== -1) return;
         await classes.push(`${classcode}.assigned`, {
             name: name,
             uuid: uuid,
@@ -364,6 +364,24 @@ class Database {
             }
         }
         return assignments;
+    }
+
+    async removeAssignment(classcode, uuid) {
+        let current = await classes.get(`${classcode}.assigned`);
+        let index = current.findIndex((e) => e.uuid === uuid);
+        if (index === -1) return;
+        current.splice(index, 1);
+        await classes.set(`${classcode}.assigned`, current);
+
+        const studentData = await classes.get(`${classcode}.students`);
+        if (!(studentData instanceof Array)) throw new error(500, "Could not assign sets to all students.");
+        studentData.map((student) => {
+            let studentindex = student.assignments.findIndex((e) => e.uuid === uuid);
+            if (studentindex === -1) return student;
+            student.assignments.splice(studentindex, 1);
+            return student;
+        });
+        await classes.set(`${classcode}.students`, studentData);
     }
 
     async fetchSetTable() {
