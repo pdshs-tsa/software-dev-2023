@@ -38,23 +38,23 @@
 <div>
     <div class="content">
         <div class="box quick-links info-box">
-            <h1 class="box-title">General Information</h1>
+        <h1 class="box-title">Welcome to ProFishInSea!</h1>
             <hr>
-            <p>
-                &emsp;&emsp;Welcome to <strong>ProFishInSea</strong>, a learning platform aimed at creating an equitable learning environment. Teachers can create study sets, consisting of questions and answers, and assign them to classes of students, who can then complete them as homework.
-                <br><br>
-                &emsp;&emsp;Teachers can also choose to host study sets as "live games", allowing students to play in a real time, interactive event, where students can play together in a relaxed environment and answer questions from the study set.
-            </p>
+            <strong>ProFishInSea</strong> is a study platform designed to be simple to use, effective for learning, and accessible. Teachers are able to create study sets and classes for students to use, who then play interactive learning games to reinforce knowledge retention.
+            <br><br>
+            Teachers can also host live games, which students can join and play with their peers in engaging, multiplayer games while learning content.
         </div>
 
         <div class="box other info-box">
-            <h1 class="box-title">Attribution and Tools</h1>
+            <h1 class="box-title">Reference Information</h1>
             <hr>
+
             <ul>
-                <li><a href="https://www.freepik.com/free-vector/empty-underwater-blue-shine-abstract-background-light-bright-clean-ocean-sea_10601804.htm#query=underwater&position=3&from_view=keyword&track=sph">Background image by macrovector</a> on Freepik.</li>
-                <li>All other art assets created from scratch using Adobe Illustrator.</li>
-                <li>Built with SvelteKit, using Socket.IO for networking and Nginx for the web server.</li>
-                <li>Source code repository hosted on <a href="https://github.com/pdshs-tsa/software-dev-2023">GitHub</a>.</li>
+                <li>Background image from <a href="https://www.pexels.com/photo/white-jelly-fish-underwater-photography-2508555/">Pexels.com</a>.</li>
+                <li>All other assets created from scratch using Adobe Illustrator.</li>
+                <li>Website created using SvelteKit and Socket.IO.</li>
+                <li>Web server using Nginx.</li>
+                <li>All code is hosted locally on <a href="https://github.com/pdshs-tsa/software-dev-2023">GitHub</a>.</li>
             </ul>
         </div>
     </div>
