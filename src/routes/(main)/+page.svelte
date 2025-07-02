@@ -38,14 +38,24 @@
 <div>
     <div class="content">
         <div class="box quick-links info-box">
-            <h1 class="box-title">Quick Links</h1>
+            <h1 class="box-title">General Information</h1>
             <hr>
-            <a href="/play">Play</a>
+            <p>
+                &emsp;&emsp;Welcome to <strong>ProFishInSea</strong>, a learning platform aimed at creating an equitable learning environment. Teachers can create study sets, consisting of questions and answers, and assign them to classes of students, who can then complete them as homework.
+                <br><br>
+                &emsp;&emsp;Teachers can also choose to host study sets as "live games", allowing students to play in a real time, interactive event, where students can play together in a relaxed environment and answer questions from the study set.
+            </p>
         </div>
 
         <div class="box other info-box">
-            <h1 class="box-title">Other Information</h1>
+            <h1 class="box-title">Attribution and Tools</h1>
             <hr>
+            <ul>
+                <li><a href="https://www.freepik.com/free-vector/empty-underwater-blue-shine-abstract-background-light-bright-clean-ocean-sea_10601804.htm#query=underwater&position=3&from_view=keyword&track=sph">Background image by macrovector</a> on Freepik.</li>
+                <li>All other art assets created from scratch using Adobe Illustrator.</li>
+                <li>Built with SvelteKit, using Socket.IO for networking and Nginx for the web server.</li>
+                <li>Source code repository hosted on <a href="https://github.com/pdshs-tsa/software-dev-2023">GitHub</a>.</li>
+            </ul>
         </div>
     </div>
 </div>

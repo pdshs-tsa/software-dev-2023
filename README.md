@@ -8,4 +8,4 @@ Quiz Me is an online study platform made to be less frustrating and easier for k
 - No ads, no subscription, everything is free to use
 
 ## Hosting Information
-The implementation can be found at https://phqsh.me
+The implementation can be found at https://phqsh.tech/

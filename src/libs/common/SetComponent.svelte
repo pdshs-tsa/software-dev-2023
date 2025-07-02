@@ -12,7 +12,7 @@
         correct: ''
     }
 
-    $: {
+    /*$: {
         if (data.correct === '') {
             let count = 0;
             for (const answer of data.answers) {
@@ -32,7 +32,7 @@
                 if (answer.startsWith(data.correct) || answer.startsWith(data.correct.substring(0, data.correct.length - 1))) data.correct = answer;
             }
         }
-    }
+    }*/
 
     function switchStatus(){
         collapsed = !collapsed;

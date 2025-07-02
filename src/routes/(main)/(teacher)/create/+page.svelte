@@ -4,7 +4,7 @@
     import {applyAction, deserialize} from "$app/forms";
     import {goto, invalidateAll} from "$app/navigation";
     import { page } from '$app/stores'
-
+    let components;
     $: components = [{ prompt: '', answers: ['', '', '', ''], correct: '' }];
     $: props = [];
     const user = $page.data.user;
